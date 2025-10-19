@@ -42,30 +42,52 @@ const server = new Server(
 const TOOLS = [
     {
         name: 'query_city_data',
-        description: 'Query urban data for any city using natural language. Supports real estate, transit, businesses, demographics, and more.',
+        description: 'Query urban data using natural language OR direct Cypher queries. Natural language is translated automatically. For complex queries, you can generate Cypher directly after fetching schema via get_city_schema.',
         inputSchema: {
             type: 'object',
             properties: {
                 query: {
                     type: 'string',
-                    description: 'Natural language query (e.g., "Properties under $800K in Brooklyn")',
+                    description: 'Natural language query (e.g., "Stations south of Houston") or description of the Cypher query',
                 },
                 city: {
                     type: 'string',
-                    description: 'City code (e.g., "nyc", "sf", "chicago")',
+                    description: 'City code (default: "nyc")',
                     default: 'nyc',
                 },
                 category: {
                     type: 'string',
-                    description: 'Optional category filter (e.g., "real_estate", "transit", "businesses")',
+                    description: 'Optional category filter',
                 },
                 limit: {
                     type: 'number',
-                    description: 'Maximum number of results (default: 10)',
+                    description: 'Maximum number of results (default: 10, max: 100)',
                     default: 10,
+                },
+                cypher_query: {
+                    type: 'string',
+                    description: 'Optional: Direct Cypher query for complex operations. If provided, bypasses natural language translation. Must be read-only and include LIMIT clause. Use get_city_schema first to understand graph structure.',
+                },
+                cypher_params: {
+                    type: 'object',
+                    description: 'Optional: Parameters for the Cypher query ($param references). Example: {"borough": "M", "lat": 40.7}',
                 },
             },
             required: ['query'],
+        },
+    },
+    {
+        name: 'get_city_schema',
+        description: 'Get the Neo4j graph schema for a city including node labels, relationships, properties, indexes, sample queries, and security constraints. ALWAYS call this before generating Cypher queries.',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                city: {
+                    type: 'string',
+                    description: 'City code (default: "nyc")',
+                    default: 'nyc',
+                },
+            },
         },
     },
     {
@@ -100,15 +122,25 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
     try {
         switch (name) {
             case 'query_city_data': {
-                const { query, city = 'nyc', category, limit = 10 } = args;
+                const { query, city = 'nyc', category, limit = 10, cypher_query, cypher_params } = args;
+
+                const requestBody = { query, category, limit };
+                
+                // If Cypher query is provided, include it
+                if (cypher_query) {
+                    requestBody.cypher_query = cypher_query;
+                    if (cypher_params) {
+                        requestBody.cypher_params = cypher_params;
+                    }
+                }
 
                 const response = await fetch(`${API_URL}/api/${city}/query`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
+                        'X-API-Key': API_KEY,
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ query, category, limit }),
+                    body: JSON.stringify(requestBody),
                 });
 
                 if (!response.ok) {
@@ -128,10 +160,35 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 };
             }
 
+            case 'get_city_schema': {
+                const { city = 'nyc' } = args;
+
+                const response = await fetch(`${API_URL}/api/${city}/schema`, {
+                    headers: {
+                        'X-API-Key': API_KEY,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch schema');
+                }
+
+                const schema = await response.json();
+
+                return {
+                    content: [
+                        {
+                            type: 'text',
+                            text: JSON.stringify(schema, null, 2),
+                        },
+                    ],
+                };
+            }
+
             case 'list_cities': {
                 const response = await fetch(`${API_URL}/cities`, {
                     headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
+                        'X-API-Key': API_KEY,
                     },
                 });
 
@@ -154,7 +211,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             case 'get_usage_stats': {
                 const response = await fetch(`${API_URL}/usage`, {
                     headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
+                        'X-API-Key': API_KEY,
                     },
                 });
 
