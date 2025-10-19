@@ -137,7 +137,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 const response = await fetch(`${API_URL}/api/${city}/query`, {
                     method: 'POST',
                     headers: {
-                        'X-API-Key': API_KEY,
+                        'Authorization': `Bearer ${API_KEY}`,
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(requestBody),
@@ -165,7 +165,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
                 const response = await fetch(`${API_URL}/api/${city}/schema`, {
                     headers: {
-                        'X-API-Key': API_KEY,
+                        'Authorization': `Bearer ${API_KEY}`,
                     },
                 });
 
@@ -188,7 +188,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             case 'list_cities': {
                 const response = await fetch(`${API_URL}/cities`, {
                     headers: {
-                        'X-API-Key': API_KEY,
+                        'Authorization': `Bearer ${API_KEY}`,
                     },
                 });
 
@@ -211,7 +211,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             case 'get_usage_stats': {
                 const response = await fetch(`${API_URL}/usage`, {
                     headers: {
-                        'X-API-Key': API_KEY,
+                        'Authorization': `Bearer ${API_KEY}`,
                     },
                 });
 
