@@ -41,53 +41,73 @@ const server = new Server(
 // Define available tools
 const TOOLS = [
     {
+        name: 'get_city_schema',
+        description: `Get the Neo4j graph schema for a city. **ALWAYS CALL THIS FIRST** before querying.
+        
+Returns: node labels, relationships, properties, indexes, sample Cypher queries, and security constraints.
+
+**RECOMMENDED WORKFLOW:**
+1. Call get_city_schema to understand the graph structure
+2. Generate Cypher query based on schema
+3. Use query_city_data with cypher_query parameter
+
+Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated Cypher from schema is more reliable, expressive, and handles complex queries better.`,
+        inputSchema: {
+            type: 'object',
+            properties: {
+                city: {
+                    type: 'string',
+                    description: 'City code (default: "nyc")',
+                    default: 'nyc',
+                },
+            },
+        },
+    },
+    {
         name: 'query_city_data',
-        description: 'Query urban data using natural language OR direct Cypher queries. Natural language is translated automatically. For complex queries, you can generate Cypher directly after fetching schema via get_city_schema.',
+        description: `Execute queries against city data. **BEST PRACTICE: Generate Cypher from schema rather than using natural language.**
+
+**Two modes:**
+1. **Cypher (RECOMMENDED)**: Generate Cypher after calling get_city_schema. More reliable and expressive.
+2. **Natural Language (FALLBACK)**: Simple queries only. Limited patterns. Brittle.
+
+**Why Cypher-first?**
+- Natural language parser is limited to predefined patterns
+- Cypher handles complex queries (multiple filters, aggregations, etc.)
+- LLMs are excellent at generating Cypher from schema
+- Security validation ensures read-only operations
+
+**Workflow:**
+1. Call get_city_schema
+2. Generate Cypher based on user question and schema
+3. Submit via cypher_query parameter`,
         inputSchema: {
             type: 'object',
             properties: {
                 query: {
                     type: 'string',
-                    description: 'Natural language query (e.g., "Stations south of Houston") or description of the Cypher query',
+                    description: 'User question or description. Used for logging and natural language fallback.',
                 },
                 city: {
                     type: 'string',
                     description: 'City code (default: "nyc")',
                     default: 'nyc',
-                },
-                category: {
-                    type: 'string',
-                    description: 'Optional category filter',
-                },
-                limit: {
-                    type: 'number',
-                    description: 'Maximum number of results (default: 10, max: 100)',
-                    default: 10,
                 },
                 cypher_query: {
                     type: 'string',
-                    description: 'Optional: Direct Cypher query for complex operations. If provided, bypasses natural language translation. Must be read-only and include LIMIT clause. Use get_city_schema first to understand graph structure.',
+                    description: 'RECOMMENDED: Cypher query generated from schema. Must be read-only, include LIMIT clause (max 1000). Validated for security before execution.',
                 },
                 cypher_params: {
                     type: 'object',
-                    description: 'Optional: Parameters for the Cypher query ($param references). Example: {"borough": "M", "lat": 40.7}',
+                    description: 'Parameters for Cypher query. Use $param syntax in query. Example: {"borough": "M", "lat": 40.7}',
+                },
+                limit: {
+                    type: 'number',
+                    description: 'Maximum results for natural language queries (default: 10, max: 100)',
+                    default: 10,
                 },
             },
             required: ['query'],
-        },
-    },
-    {
-        name: 'get_city_schema',
-        description: 'Get the Neo4j graph schema for a city including node labels, relationships, properties, indexes, sample queries, and security constraints. ALWAYS call this before generating Cypher queries.',
-        inputSchema: {
-            type: 'object',
-            properties: {
-                city: {
-                    type: 'string',
-                    description: 'City code (default: "nyc")',
-                    default: 'nyc',
-                },
-            },
         },
     },
     {
