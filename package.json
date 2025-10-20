@@ -1,7 +1,7 @@
 {
     "name": "datagraph-mcp-server",
     "version": "1.0.0",
-    "description": "Model Context Protocol server for DataGraph API",
+    "description": "Model Context Protocol server for DataGraph API. Query urban data for civic problem-solving using GOSR framework (gosr.ai).",
     "main": "index.js",
     "type": "module",
     "mcpName": "io.github.kevinkells/datagraph",
