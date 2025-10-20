@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "name": "io.github.team-earth/datagraph",
+  "title": "DataGraph",
+  "description": "Urban intelligence knowledge graph. Structured city data for civic problem-solving.",
+  "version": "1.0.0",
+  "homepage": "https://datagraph.city",
+  "license": "MIT",
+  "keywords": [
+    "urban-data",
+    "real-estate",
+    "nyc",
+    "graph-rag",
+    "city-data",
+    "demographics",
+    "transit",
+    "natural-language"
+  ],
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "datagraph-mcp-server",
+      "version": "1.0.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
+
