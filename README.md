@@ -66,7 +66,7 @@ Add this configuration:
       "command": "npx",
       "args": [
         "-y",
-        "datagraph-mcp-server"
+        "datagraph-city-mcp-server"
       ],
       "env": {
         "DATAGRAPH_API_KEY": "dgc_your_api_key_here"
@@ -154,7 +154,7 @@ npm publish
 
 Then users can install with:
 ```bash
-npx datagraph-mcp-server
+npx datagraph-city-mcp-server
 ```
 
 ## Troubleshooting

@@ -1,12 +1,12 @@
 {
-    "name": "datagraph-mcp-server",
+    "name": "datagraph-city-mcp-server",
     "version": "1.0.0",
     "description": "Model Context Protocol server for DataGraph API",
     "main": "index.js",
     "type": "module",
     "mcpName": "io.github.team-earth/datagraph",
     "bin": {
-        "datagraph-mcp-server": "./index.js"
+        "datagraph-city-mcp-server": "./index.js"
     },
     "scripts": {
         "start": "node index.js",

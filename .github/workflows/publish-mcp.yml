@@ -64,12 +64,12 @@ jobs:
             ## DataGraph MCP Server v${{ steps.version.outputs.VERSION }}
             
             Published to:
-            - 📦 NPM: https://www.npmjs.com/package/datagraph-mcp-server
+            - 📦 NPM: https://www.npmjs.com/package/datagraph-city-mcp-server
             - 🔌 MCP Registry: https://registry.modelcontextprotocol.io
             
             ### Installation
             ```bash
-            npx datagraph-mcp-server
+            npx datagraph-city-mcp-server
             ```
             
             ### What's Changed

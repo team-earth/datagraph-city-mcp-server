@@ -71,7 +71,7 @@ git push origin mcp-v1.0.0
 
 After the workflow completes:
 
-1. **Check NPM**: https://www.npmjs.com/package/datagraph-mcp-server
+1. **Check NPM**: https://www.npmjs.com/package/datagraph-city-mcp-server
 2. **Check MCP Registry**:
    ```bash
    curl "https://registry.modelcontextprotocol.io/v0/servers?search=io.github.team-earth/datagraph"
@@ -207,6 +207,6 @@ After publishing:
 
 - GitHub Issues: https://github.com/team-earth/datagraph-city-mcp-server/issues
 - MCP Registry Docs: https://modelcontextprotocol.io/docs
-- NPM Package: https://www.npmjs.com/package/datagraph-mcp-server
+- NPM Package: https://www.npmjs.com/package/datagraph-city-mcp-server
 
 
