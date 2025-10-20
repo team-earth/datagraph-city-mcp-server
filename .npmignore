@@ -1,0 +1,12 @@
+# Don't publish these to NPM
+.env
+.env.example
+.venv/
+node_modules/
+test-mcp.js
+test-mcp-simple.sh
+validate_server_json.py
+server.json
+CLAUDE_DESKTOP_SETUP.md
+PUBLISHING.md
+

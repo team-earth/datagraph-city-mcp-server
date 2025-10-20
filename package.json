@@ -4,6 +4,10 @@
     "description": "Model Context Protocol server for DataGraph API",
     "main": "index.js",
     "type": "module",
+    "mcpName": "io.github.kevinkells/datagraph",
+    "bin": {
+        "datagraph-mcp-server": "./index.js"
+    },
     "scripts": {
         "start": "node index.js",
         "dev": "node --watch index.js"
@@ -12,10 +16,19 @@
         "mcp",
         "datagraph",
         "urban-data",
-        "graphrag"
+        "graphrag",
+        "real-estate",
+        "nyc",
+        "city-data"
     ],
     "author": "DataGraph",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kevinkells/datagraph.city.git",
+        "directory": "mcp-server"
+    },
+    "homepage": "https://datagraph.city",
     "dependencies": {
         "@modelcontextprotocol/sdk": "^0.5.0",
         "dotenv": "^16.3.1"
