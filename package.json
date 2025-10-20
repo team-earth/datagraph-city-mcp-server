@@ -17,9 +17,10 @@
         "datagraph",
         "urban-data",
         "graphrag",
-        "real-estate",
         "nyc",
-        "city-data"
+        "city-data",
+        "civic-tech",
+        "transit"
     ],
     "author": "DataGraph",
     "license": "MIT",

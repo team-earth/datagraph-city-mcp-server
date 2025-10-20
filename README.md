@@ -85,9 +85,9 @@ Restart Claude Desktop for changes to take effect.
 Once configured, you can ask Claude:
 
 ```
-"Using DataGraph, find properties under $800K in Brooklyn near subway stations"
+"Using DataGraph, find wheelchair-accessible subway stations in Brooklyn"
 
-"Show me the safest neighborhoods in NYC with good schools"
+"Show me transit connections between Manhattan and Queens"
 
 "What cities are available in DataGraph?"
 
@@ -111,7 +111,7 @@ Query urban data using natural language.
 **Example:**
 ```json
 {
-  "query": "Properties under $800K in Brooklyn",
+  "query": "Accessible subway stations in Brooklyn",
   "city": "nyc",
   "limit": 5
 }
