@@ -2,6 +2,8 @@
 
 Model Context Protocol server for accessing DataGraph API from Claude Desktop, ChatGPT, and other MCP-compatible clients.
 
+**Built for civic problem-solving** using the [GOSR framework](https://gosr.ai) (Goal-Obstacle-Solution-Resource). Query structured urban data to identify civic challenges and discover solutions.
+
 ## Installation
 
 ### 1. Install Dependencies
@@ -82,7 +84,7 @@ Restart Claude Desktop for changes to take effect.
 
 ## Example Usage in Claude
 
-Once configured, you can ask Claude:
+Once configured, you can ask Claude to solve civic problems using [GOSR](https://gosr.ai):
 
 ```
 "Using DataGraph, find wheelchair-accessible subway stations in Brooklyn"
@@ -94,7 +96,7 @@ Once configured, you can ask Claude:
 "What's my current API usage?"
 ```
 
-Claude will automatically use the DataGraph MCP server to query the data.
+Claude will automatically use the DataGraph MCP server to query structured urban data. Perfect for [GOSR.ai](https://gosr.ai) civic research and goal-oriented problem-solving.
 
 ## Available Tools
 
@@ -179,9 +181,23 @@ DATAGRAPH_API_KEY=dgc_your_key_here
 2. Run `npm install` in mcp-server directory
 3. Test manually: `node index.js`
 
+## Use Cases
+
+### Civic Research & GOSR Applications
+- **Transit Accessibility**: Identify gaps in wheelchair-accessible stations
+- **Urban Planning**: Analyze transit coverage and connectivity
+- **Community Advocacy**: Support evidence-based civic campaigns
+- **Goal-Oriented Solutions**: Use [GOSR.ai](https://gosr.ai) framework for structured problem-solving
+
+### Commercial Use
+- Urban intelligence products
+- City analytics platforms
+- Research and consulting
+
 ## Support
 
 - Documentation: https://docs.datagraph.city/mcp
+- GOSR Framework: https://gosr.ai
 - Issues: https://github.com/team-earth/datagraph-city-mcp-server/issues
 - Email: support@datagraph.city
 
