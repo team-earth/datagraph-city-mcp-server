@@ -160,7 +160,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 const { query, city = 'nyc', category, limit = 10, cypher_query, cypher_params } = args;
 
                 const requestBody = { query, category, limit };
-                
+
                 // If Cypher query is provided, include it
                 if (cypher_query) {
                     requestBody.cypher_query = cypher_query;
@@ -246,7 +246,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             case 'list_datasets': {
                 const { city } = args;
                 const url = city ? `${API_URL}/datasets?city=${encodeURIComponent(city)}` : `${API_URL}/datasets`;
-                
+
                 const response = await fetch(url, {
                     headers: {
                         'Authorization': `Bearer ${API_KEY}`,
