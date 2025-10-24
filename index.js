@@ -57,8 +57,9 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
             properties: {
                 city: {
                     type: 'string',
-                    description: 'City code (default: "nyc")',
+                    description: 'City code: "nyc" (New York), "kc" (Kansas City), etc. (default: "nyc")',
                     default: 'nyc',
+                    enum: ['nyc', 'kc'],
                 },
             },
         },
@@ -90,8 +91,9 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
                 },
                 city: {
                     type: 'string',
-                    description: 'City code (default: "nyc")',
+                    description: 'City code: "nyc" (New York), "kc" (Kansas City), etc. (default: "nyc")',
                     default: 'nyc',
+                    enum: ['nyc', 'kc'],
                 },
                 cypher_query: {
                     type: 'string',
@@ -116,6 +118,19 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
         inputSchema: {
             type: 'object',
             properties: {},
+        },
+    },
+    {
+        name: 'list_datasets',
+        description: 'List all available GOSR datasets with their node counts and metadata. Use this to discover civic datasets like Kansas City violence prevention.',
+        inputSchema: {
+            type: 'object',
+            properties: {
+                city: {
+                    type: 'string',
+                    description: 'Filter by city name (optional)',
+                },
+            },
         },
     },
     {
@@ -223,6 +238,32 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                         {
                             type: 'text',
                             text: JSON.stringify(cities, null, 2),
+                        },
+                    ],
+                };
+            }
+
+            case 'list_datasets': {
+                const { city } = args;
+                const url = city ? `${API_URL}/datasets?city=${encodeURIComponent(city)}` : `${API_URL}/datasets`;
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to list datasets');
+                }
+
+                const datasets = await response.json();
+
+                return {
+                    content: [
+                        {
+                            type: 'text',
+                            text: JSON.stringify(datasets, null, 2),
                         },
                     ],
                 };
