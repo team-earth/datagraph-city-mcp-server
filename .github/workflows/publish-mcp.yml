@@ -55,11 +55,14 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
-      - name: Submit to MCP Registry
-        uses: modelcontextprotocol/registry-submit-action@main
-        with:
-          package-name: datagraph-city-mcp-server
-          package-version: ${{ steps.get_version.outputs.VERSION }}
+      # MCP Registry submission - action not yet publicly available
+      # The modelcontextprotocol/registry-submit-action repository does not exist
+      # Manual submission required: Use `mcp-publisher publish` after workflow completes
+      # - name: Submit to MCP Registry
+      #   uses: modelcontextprotocol/registry-submit-action@main
+      #   with:
+      #     package-name: datagraph-city-mcp-server
+      #     package-version: ${{ steps.get_version.outputs.VERSION }}
       
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
