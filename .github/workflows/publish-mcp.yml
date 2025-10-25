@@ -56,7 +56,10 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
       - name: Install MCP Publisher
-        run: npm install -g @modelcontextprotocol/publisher
+        run: |
+          curl -fsSL https://github.com/modelcontextprotocol/publisher/releases/latest/download/mcp-publisher-linux-amd64 -o /tmp/mcp-publisher
+          chmod +x /tmp/mcp-publisher
+          sudo mv /tmp/mcp-publisher /usr/local/bin/mcp-publisher
       
       - name: Authenticate with MCP Registry (GitHub OIDC)
         run: mcp-publisher login github-oidc
