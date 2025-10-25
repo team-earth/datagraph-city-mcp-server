@@ -3,7 +3,7 @@
     "name": "io.github.team-earth/datagraph",
     "title": "DataGraph",
     "description": "Urban data for civic problem-solving: NYC subway, loneliness programs, violence prevention.",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "homepage": "https://datagraph.city",
     "license": "MIT",
     "keywords": [
@@ -23,7 +23,7 @@
         {
             "registryType": "npm",
             "identifier": "datagraph-city-mcp-server",
-            "version": "1.1.5",
+            "version": "1.1.6",
             "transport": {
                 "type": "stdio"
             }
