@@ -1,33 +1,32 @@
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "name": "io.github.team-earth/datagraph",
-  "title": "DataGraph",
-  "description": "Urban intelligence knowledge graph with civic problem-solving data. NYC subway (445 stations), NYC GOSR loneliness programs (7,514), Kansas City violence prevention (149).",
-  "version": "1.1.0",
-  "homepage": "https://datagraph.city",
-  "license": "MIT",
-  "keywords": [
-    "urban-data",
-    "civic-tech",
-    "gosr",
-    "nyc",
-    "kansas-city",
-    "graph-rag",
-    "city-data",
-    "transit",
-    "loneliness",
-    "violence-prevention",
-    "natural-language"
-  ],
-  "packages": [
-    {
-      "registryType": "npm",
-      "identifier": "datagraph-city-mcp-server",
-      "version": "1.1.0",
-      "transport": {
-        "type": "stdio"
-      }
-    }
-  ]
+    "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+    "name": "io.github.team-earth/datagraph",
+    "title": "DataGraph",
+    "description": "Urban data for civic problem-solving: NYC subway, loneliness programs, violence prevention.",
+    "version": "1.1.1",
+    "homepage": "https://datagraph.city",
+    "license": "MIT",
+    "keywords": [
+        "urban-data",
+        "civic-tech",
+        "gosr",
+        "nyc",
+        "kansas-city",
+        "graph-rag",
+        "city-data",
+        "transit",
+        "loneliness",
+        "violence-prevention",
+        "natural-language"
+    ],
+    "packages": [
+        {
+            "registryType": "npm",
+            "identifier": "datagraph-city-mcp-server",
+            "version": "1.1.1",
+            "transport": {
+                "type": "stdio"
+            }
+        }
+    ]
 }
-

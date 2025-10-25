@@ -1,10 +1,10 @@
 {
     "name": "datagraph-city-mcp-server",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "Model Context Protocol server for DataGraph API. Query urban data (NYC subway, Un-Lonely NYC, Kansas City violence prevention) using GOSR framework (gosr.ai).",
     "main": "index.js",
     "type": "module",
-    "mcpName": "io.github.kevinkells/datagraph",
+    "mcpName": "io.github.team-earth/datagraph",
     "bin": {
         "datagraph-city-mcp-server": "./index.js"
     },
