@@ -58,7 +58,7 @@ jobs:
       - name: Submit to MCP Registry
         uses: modelcontextprotocol/registry-submit-action@main
         with:
-          package-name: datagraph-mcp-server
+          package-name: datagraph-city-mcp-server
           package-version: ${{ steps.get_version.outputs.VERSION }}
       
       - name: Create GitHub Release
