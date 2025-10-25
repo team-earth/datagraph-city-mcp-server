@@ -5,6 +5,17 @@
  * 
  * Model Context Protocol server that provides access to DataGraph API
  * for use with Claude Desktop, ChatGPT, and other MCP-compatible clients.
+ * 
+ * Available Datasets:
+ * - NYC Subway: 445 stations with locations and lines
+ * - NYC GOSR (Un-Lonely NYC): 7,514 programs addressing urban loneliness
+ * - Kansas City GOSR: 149 violence prevention resources
+ * 
+ * Example Queries:
+ * - "Find programs addressing social isolation in NYC"
+ * - "Show violence prevention resources in Kansas City"
+ * - "List organizations running the most programs in NYC"
+ * - "Find geocoded community programs near me"
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -29,7 +40,7 @@ if (!API_KEY) {
 const server = new Server(
     {
         name: 'datagraph',
-        version: '1.0.0',
+        version: '1.1.0',
     },
     {
         capabilities: {
@@ -122,7 +133,13 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
     },
     {
         name: 'list_datasets',
-        description: 'List all available GOSR datasets with their node counts and metadata. Use this to discover civic datasets like Kansas City violence prevention.',
+        description: `List all available GOSR (Goal-Obstacle-Solution-Resource) datasets with their node counts and metadata.
+
+**Available GOSR Datasets:**
+- **Kansas City** (kc): Violence prevention programs and community resources
+- **New York City** (nyc): Un-Lonely NYC - Urban loneliness and social isolation programs
+
+Use this to discover civic datasets and their structure before querying.`,
         inputSchema: {
             type: 'object',
             properties: {
