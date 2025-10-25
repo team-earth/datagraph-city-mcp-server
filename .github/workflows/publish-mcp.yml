@@ -58,7 +58,7 @@ jobs:
       - name: Submit to MCP Registry
         uses: modelcontextprotocol/registry-submit-action@main
         with:
-          package-name: datagraph-mcp-server
+          package-name: datagraph-city-mcp-server
           package-version: ${{ steps.get_version.outputs.VERSION }}
       
       - name: Create GitHub Release
@@ -71,7 +71,7 @@ jobs:
             
             ### Installation
             ```bash
-            npx datagraph-mcp-server
+            npx datagraph-city-mcp-server
             ```
             
             ### What's Changed
@@ -89,6 +89,6 @@ jobs:
       - name: Notify completion
         run: |
           echo "✅ Successfully published v${{ steps.get_version.outputs.VERSION }}"
-          echo "📦 NPM: https://www.npmjs.com/package/datagraph-mcp-server"
+          echo "📦 NPM: https://www.npmjs.com/package/datagraph-city-mcp-server"
           echo "🐙 GitHub: https://github.com/team-earth/datagraph-city-mcp-server/releases"
 
