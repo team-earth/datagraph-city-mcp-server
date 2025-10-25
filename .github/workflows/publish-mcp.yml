@@ -55,13 +55,11 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       
-      # MCP Registry submission - currently disabled (action not yet available)
-      # To submit manually: https://github.com/modelcontextprotocol/registry
-      # - name: Submit to MCP Registry
-      #   uses: modelcontextprotocol/registry-submit-action@main
-      #   with:
-      #     package-name: datagraph-city-mcp-server
-      #     package-version: ${{ steps.get_version.outputs.VERSION }}
+      - name: Submit to MCP Registry
+        uses: modelcontextprotocol/registry-submit-action@main
+        with:
+          package-name: datagraph-city-mcp-server
+          package-version: ${{ steps.get_version.outputs.VERSION }}
       
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
