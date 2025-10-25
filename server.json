@@ -1,26 +1,29 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "name": "io.github.kevinkells/datagraph",
+  "name": "io.github.team-earth/datagraph",
   "title": "DataGraph",
-  "description": "Urban intelligence knowledge graph. Structured city data for civic problem-solving.",
-  "version": "1.0.0",
+  "description": "Urban intelligence knowledge graph with civic problem-solving data. NYC subway (445 stations), NYC GOSR loneliness programs (7,514), Kansas City violence prevention (149).",
+  "version": "1.1.0",
   "homepage": "https://datagraph.city",
   "license": "MIT",
   "keywords": [
     "urban-data",
-    "real-estate",
+    "civic-tech",
+    "gosr",
     "nyc",
+    "kansas-city",
     "graph-rag",
     "city-data",
-    "demographics",
     "transit",
+    "loneliness",
+    "violence-prevention",
     "natural-language"
   ],
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "datagraph-mcp-server",
-      "version": "1.0.0",
+      "identifier": "datagraph-city-mcp-server",
+      "version": "1.1.0",
       "transport": {
         "type": "stdio"
       }
