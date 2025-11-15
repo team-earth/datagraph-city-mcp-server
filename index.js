@@ -10,12 +10,17 @@
  * - NYC Subway: 445 stations with locations and lines
  * - NYC GOSR (Un-Lonely NYC): 7,514 programs addressing urban loneliness
  * - Kansas City GOSR: 149 violence prevention resources
+ * - NYC DOB Permits: 31,001 building permits with locations and work types
+ * - NYC Property Sales: 53,464 real estate transactions with prices
+ * - NYC Crime Data: 100,000 NYPD complaints with demographics
+ * - NYC Demographics: 195 neighborhoods with population statistics
  * 
  * Example Queries:
  * - "Find programs addressing social isolation in NYC"
- * - "Show violence prevention resources in Kansas City"
- * - "List organizations running the most programs in NYC"
- * - "Find geocoded community programs near me"
+ * - "Show recent building permits in Manhattan"
+ * - "What are property sale prices by borough?"
+ * - "Show crime statistics for Brooklyn"
+ * - "Which neighborhoods have the highest population?"
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -57,6 +62,8 @@ const TOOLS = [
         
 Returns: node labels, relationships, properties, indexes, sample Cypher queries, and security constraints.
 
+Available NYC datasets: Subway stations, GOSR programs, DOB building permits, property sales, crime data, and demographics.
+
 **RECOMMENDED WORKFLOW:**
 1. Call get_city_schema to understand the graph structure
 2. Generate Cypher query based on schema
@@ -81,7 +88,14 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
 
 **Two modes:**
 1. **Cypher (RECOMMENDED)**: Generate Cypher after calling get_city_schema. More reliable and expressive.
-2. **Natural Language (FALLBACK)**: Simple queries only. Limited patterns. Brittle.
+2. **Natural Language**: Supports GOSR programs, subway stations, DOB permits, property sales, crime data, demographics.
+
+**Natural Language Examples:**
+- "Show building permits in Manhattan"
+- "What are recent property sales?"
+- "Show crime statistics by borough"
+- "Which neighborhoods are most populous?"
+- "Find programs addressing social isolation"
 
 **Why Cypher-first?**
 - Natural language parser is limited to predefined patterns
@@ -133,11 +147,22 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
     },
     {
         name: 'list_datasets',
-        description: `List all available GOSR (Goal-Obstacle-Solution-Resource) datasets with their node counts and metadata.
+        description: `List all available datasets with their node counts and metadata.
 
-**Available GOSR Datasets:**
-- **Kansas City** (kc): Violence prevention programs and community resources
-- **New York City** (nyc): Un-Lonely NYC - Urban loneliness and social isolation programs
+**Available Datasets:**
+
+**GOSR (Goal-Obstacle-Solution-Resource):**
+- **Kansas City** (kc): Violence prevention programs and community resources (149 programs)
+- **New York City** (nyc): Un-Lonely NYC - Urban loneliness and social isolation programs (7,514 programs)
+
+**NYC Urban Data:**
+- **DOB Permits**: Building permits with work types, costs, and locations (31,001 permits)
+- **Property Sales**: Real estate transactions with prices and neighborhoods (53,464 sales)
+- **Crime Data**: NYPD complaints with offense types and demographics (100,000 complaints)
+- **Demographics**: Neighborhood population statistics (195 NTAs)
+
+**NYC Infrastructure:**
+- **Subway**: MTA station data with lines and locations (445 stations)
 
 Use this to discover civic datasets and their structure before querying.`,
         inputSchema: {

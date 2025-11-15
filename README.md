@@ -85,16 +85,33 @@ Restart Claude Desktop for changes to take effect.
 Once configured, you can ask Claude:
 
 ```
-"Using DataGraph, find properties under $800K in Brooklyn near subway stations"
+"Using DataGraph, show me recent building permits in Manhattan"
 
-"Show me the safest neighborhoods in NYC with good schools"
+"What are property sale prices by borough in NYC?"
+
+"Show crime statistics for Brooklyn"
+
+"Which NYC neighborhoods have the highest population?"
+
+"Find programs addressing social isolation in NYC"
 
 "What cities are available in DataGraph?"
-
-"What's my current API usage?"
 ```
 
 Claude will automatically use the DataGraph MCP server to query the data.
+
+## Available Datasets
+
+**New York City (nyc):**
+- **Subway**: 445 MTA stations with lines and locations
+- **GOSR (Un-Lonely NYC)**: 7,514 programs addressing urban loneliness
+- **DOB Permits**: 31,001 building permits with work types and costs
+- **Property Sales**: 53,464 real estate transactions with prices
+- **Crime Data**: 100,000 NYPD complaints with demographics
+- **Demographics**: 195 neighborhoods with population statistics
+
+**Kansas City (kc):**
+- **GOSR**: 149 violence prevention and community resources
 
 ## Available Tools
 
