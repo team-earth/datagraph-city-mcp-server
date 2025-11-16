@@ -105,7 +105,9 @@ Claude will automatically use the DataGraph MCP server to query the data.
 **New York City (nyc):**
 - **Subway**: 445 MTA stations with lines and locations
 - **GOSR (Un-Lonely NYC)**: 7,514 programs addressing urban loneliness
-- **DOB Permits**: 31,001 building permits with work types and costs
+- **DOB Permits**: 856,480 building permits from DOB NOW (March 2021-present)
+  - Source: NYC Open Data `rbx6-tga4` - DOB NOW: Build - Approved Permits
+  - Includes work types, costs, dates, applicants, owners, building details
 - **Property Sales**: 53,464 real estate transactions with prices
 - **Crime Data**: 100,000 NYPD complaints with demographics
 - **Demographics**: 195 neighborhoods with population statistics
