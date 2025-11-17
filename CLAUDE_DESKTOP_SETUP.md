@@ -31,7 +31,27 @@ Download from: https://claude.ai/download
 C:\Users\<YourUsername>\AppData\Roaming\Claude\claude_desktop_config.json
 ```
 
-**Config content:**
+**Config content (Option 1 - Using wsl command):**
+```json
+{
+  "mcpServers": {
+    "datagraph": {
+      "command": "wsl",
+      "args": [
+        "-d",
+        "Ubuntu",
+        "/home/kkells/datagraph.city/mcp-server/index.js"
+      ],
+      "env": {
+        "DATAGRAPH_API_KEY": "dgc_Og_CVPG3qL0JFDvuru1zNUWfYLZBPGPmfIVAXMZRrEo",
+        "DATAGRAPH_API_URL": "https://api.datagraph.city"
+      }
+    }
+  }
+}
+```
+
+**Config content (Option 2 - Using Windows node):**
 ```json
 {
   "mcpServers": {
@@ -41,7 +61,8 @@ C:\Users\<YourUsername>\AppData\Roaming\Claude\claude_desktop_config.json
         "\\\\wsl$\\Ubuntu\\home\\kkells\\datagraph.city\\mcp-server\\index.js"
       ],
       "env": {
-        "DATAGRAPH_API_KEY": "your_api_key_here"
+        "DATAGRAPH_API_KEY": "dgc_Og_CVPG3qL0JFDvuru1zNUWfYLZBPGPmfIVAXMZRrEo",
+        "DATAGRAPH_API_URL": "https://api.datagraph.city"
       }
     }
   }
@@ -49,9 +70,10 @@ C:\Users\<YourUsername>\AppData\Roaming\Claude\claude_desktop_config.json
 ```
 
 **Notes:**
-- The `\\wsl$\Ubuntu\...` path allows Windows to access WSL files
-- Replace `your_api_key_here` with your actual DataGraph API key
-- Path must use double backslashes (`\\`)
+- **Option 1 (Recommended)**: Uses `wsl` command to run in WSL environment with Linux paths
+- **Option 2**: Uses Windows Node.js with `\\wsl$\Ubuntu\...` UNC path
+- Replace API key if using a different account
+- Path must match your actual WSL username (change `kkells` if different)
 
 ### 4. Restart Claude Desktop
 
