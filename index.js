@@ -10,7 +10,8 @@
  * - NYC Subway: 445 stations with locations and lines
  * - NYC GOSR (Un-Lonely NYC): 7,514 programs addressing urban loneliness
  * - Kansas City GOSR: 149 violence prevention resources
- * - NYC DOB Permits: 31,001 building permits with locations and work types
+ * - NYC DOB Permits: 4.8M building permits with locations and work types
+ * - NYC PLUTO: 858K property parcels with owner, zoning, building characteristics, and address-to-BBL mappings
  * - NYC Property Sales: 53,464 real estate transactions with prices
  * - NYC Crime Data: 100,000 NYPD complaints with demographics
  * - NYC Demographics: 195 neighborhoods with population statistics
@@ -18,6 +19,8 @@
  * Example Queries:
  * - "Find programs addressing social isolation in NYC"
  * - "Show recent building permits in Manhattan"
+ * - "What is the BBL for 552 W 43rd Street?"
+ * - "Show property characteristics for a given address"
  * - "What are property sale prices by borough?"
  * - "Show crime statistics for Brooklyn"
  * - "Which neighborhoods have the highest population?"
