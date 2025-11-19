@@ -72,11 +72,21 @@ Available NYC datasets: Subway stations, GOSR programs, DOB building permits, PL
 2. Generate Cypher query based on schema
 3. Use query_city_data with cypher_query parameter
 
-**ADDRESS LOOKUP PATTERN (IMPORTANT):**
-When querying by address, ALWAYS convert address to BBL/BIN first using PLUTO:
-1. Match PLUTOParcel by address to get BBL
-2. Use BBL to query DOBPermit or other datasets
-Example: Find permits for "552 W 43rd St" → PLUTO (address → BBL) → DOBPermit (BBL → permits)
+**ADDRESS LOOKUP PATTERN (CRITICAL):**
+When querying by address, ALWAYS use PLUTO as the lookup table:
+
+1. PLUTO stores addresses in format: "123 STREET NAME" (all caps, no street type suffix)
+2. Use CONTAINS for flexible matching: WHERE p.address CONTAINS '552' AND p.address CONTAINS 'WEST 43'
+3. PLUTO returns BBL (Borough-Block-Lot identifier)
+4. Use BBL to join with DOBPermit, PropertySale, or other datasets
+
+Example query:
+MATCH (pluto:PLUTOParcel) WHERE pluto.address CONTAINS '552' AND pluto.address CONTAINS 'WEST 43' 
+WITH pluto.bbl as bbl
+MATCH (permit:DOBPermit) WHERE permit.bbl = bbl
+RETURN permit
+
+Why? PLUTO has 100% address coverage (858K parcels). Other datasets use BBL for joins.
 
 Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated Cypher from schema is more reliable, expressive, and handles complex queries better.`,
         inputSchema: {
@@ -107,11 +117,21 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
 - "Find programs addressing social isolation"
 
 **ADDRESS QUERIES - CRITICAL PATTERN:**
-For any address-based queries ("permits at 123 Main St"), use two-step Cypher:
-1. MATCH (p:PLUTOParcel) WHERE p.address CONTAINS 'address' RETURN p.bbl
-2. MATCH (permit:DOBPermit) WHERE permit.bbl = bbl RETURN permit
+For any address-based queries ("permits at 123 Main St"), use PLUTO first:
 
-Why? Only 18% of DOB permits have addresses; PLUTO has 100% coverage with BBL mappings.
+Address Format in PLUTO: "NUMBER STREET NAME" (uppercase, e.g., "552 WEST 43 STREET")
+- Use CONTAINS for flexible matching: WHERE p.address CONTAINS '552' AND p.address CONTAINS 'WEST 43'
+- Include borough filter when known: AND p.borough = 'MN' (Manhattan)
+- PLUTO returns BBL (10-digit Borough-Block-Lot ID)
+- Join to other datasets via BBL
+
+Example:
+MATCH (p:PLUTOParcel) WHERE p.address CONTAINS 'street number' AND p.address CONTAINS 'street name'
+WITH p.bbl as bbl, p.address as address
+MATCH (permit:DOBPermit) WHERE permit.bbl = bbl
+RETURN address, bbl, collect(permit)[0..10]
+
+Why? Only 18% of DOB permits have addresses; PLUTO provides universal address→BBL mapping.
 
 **Why Cypher-first?**
 - Natural language parser is limited to predefined patterns
