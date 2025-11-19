@@ -141,31 +141,26 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
         },
     },
     {
-        name: 'list_cities',
-        description: 'List all supported cities and their available datasets',
-        inputSchema: {
-            type: 'object',
-            properties: {},
-        },
-    },
-    {
         name: 'list_datasets',
         description: `List all available datasets with their node counts and metadata.
 
 **Available Datasets:**
 
-**GOSR (Goal-Obstacle-Solution-Resource):**
-- **Kansas City** (kc): Violence prevention programs and community resources (149 programs)
-- **New York City** (nyc): Un-Lonely NYC - Urban loneliness and social isolation programs (7,514 programs)
+**NYC Property Data:**
+- **PLUTO**: Primary Land Use Tax Lot Output - All NYC parcels with address-to-BBL/BIN mappings, ownership, zoning (858K parcels)
+- **DOB Permits**: Building permits with work types, costs, locations (4.8M permits)
+- **Property Sales**: Real estate transactions with prices and neighborhoods (53K sales)
 
-**NYC Urban Data:**
-- **DOB Permits**: Building permits with work types, costs, and locations (31,001 permits)
-- **Property Sales**: Real estate transactions with prices and neighborhoods (53,464 sales)
-- **Crime Data**: NYPD complaints with offense types and demographics (100,000 complaints)
+**NYC Public Safety & Demographics:**
+- **Crime Data**: NYPD complaints with offense types and demographics (100K complaints)
 - **Demographics**: Neighborhood population statistics (195 NTAs)
 
 **NYC Infrastructure:**
 - **Subway**: MTA station data with lines and locations (445 stations)
+
+**GOSR (Goal-Obstacle-Solution-Resource):**
+- **NYC Un-Lonely**: Urban loneliness and social isolation programs (7,514 programs)
+- **Kansas City**: Violence prevention programs and community resources (149 programs)
 
 Use this to discover civic datasets and their structure before querying.`,
         inputSchema: {
@@ -265,28 +260,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 };
             }
 
-            case 'list_cities': {
-                const response = await fetch(`${API_URL}/cities`, {
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                    },
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to list cities');
-                }
-
-                const cities = await response.json();
-
-                return {
-                    content: [
-                        {
-                            type: 'text',
-                            text: JSON.stringify(cities, null, 2),
-                        },
-                    ],
-                };
-            }
 
             case 'list_datasets': {
                 const { city } = args;
