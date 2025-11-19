@@ -65,12 +65,18 @@ const TOOLS = [
         
 Returns: node labels, relationships, properties, indexes, sample Cypher queries, and security constraints.
 
-Available NYC datasets: Subway stations, GOSR programs, DOB building permits, property sales, crime data, and demographics.
+Available NYC datasets: Subway stations, GOSR programs, DOB building permits, PLUTO property data, property sales, crime data, and demographics.
 
 **RECOMMENDED WORKFLOW:**
 1. Call get_city_schema to understand the graph structure
 2. Generate Cypher query based on schema
 3. Use query_city_data with cypher_query parameter
+
+**ADDRESS LOOKUP PATTERN (IMPORTANT):**
+When querying by address, ALWAYS convert address to BBL/BIN first using PLUTO:
+1. Match PLUTOParcel by address to get BBL
+2. Use BBL to query DOBPermit or other datasets
+Example: Find permits for "552 W 43rd St" → PLUTO (address → BBL) → DOBPermit (BBL → permits)
 
 Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated Cypher from schema is more reliable, expressive, and handles complex queries better.`,
         inputSchema: {
@@ -99,6 +105,13 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
 - "Show crime statistics by borough"
 - "Which neighborhoods are most populous?"
 - "Find programs addressing social isolation"
+
+**ADDRESS QUERIES - CRITICAL PATTERN:**
+For any address-based queries ("permits at 123 Main St"), use two-step Cypher:
+1. MATCH (p:PLUTOParcel) WHERE p.address CONTAINS 'address' RETURN p.bbl
+2. MATCH (permit:DOBPermit) WHERE permit.bbl = bbl RETURN permit
+
+Why? Only 18% of DOB permits have addresses; PLUTO has 100% coverage with BBL mappings.
 
 **Why Cypher-first?**
 - Natural language parser is limited to predefined patterns
