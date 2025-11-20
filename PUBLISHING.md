@@ -229,10 +229,50 @@ After publishing:
 3. ✅ Monitor for user feedback
 4. ✅ Plan next release
 
+## Release History
+
+### v1.2.0 (November 19, 2025)
+
+**What was published:**
+- ✅ NPM: `datagraph-city-mcp-server@1.2.0`
+- ✅ MCP Registry: `io.github.team-earth/datagraph` v1.2.0 (marked as latest)
+- ✅ GitHub Release: Created on team-earth/datagraph-city-mcp-server
+
+**Features added:**
+- NYC Urban Datasets: DOB permits (31K records), Property Sales (53K), Crime (100K), Demographics (195 NTAs)
+- PLUTO Integration: Address-to-BBL/BIN lookup system
+- Enhanced query guidance for LLMs
+- Simplified tools (removed list_cities)
+
+**Publishing process:**
+1. Updated package.json and server.json versions to 1.2.0 in monorepo
+2. Created CHANGELOG.md documenting all versions
+3. Fixed workflow to allow re-publishing existing NPM versions
+4. Added MCP Registry publish step with GitHub OIDC
+5. Synced to team-earth repo using git subtree
+6. Created v1.2.0 tag on team-earth repo
+7. GitHub Actions workflow automatically published to both registries
+
+**Lessons learned:**
+- ⚠️ Must publish from team-earth repo for OIDC authentication (not kevinkells repo)
+- ⚠️ Team-earth org membership must be public
+- ⚠️ Git subtree sync is required before tagging
+- ⚠️ Tag format: `v*` for team-earth, `mcp-v*` for kevinkells
+
+**Verification:**
+```bash
+# Check NPM
+npm view datagraph-city-mcp-server@1.2.0
+
+# Check MCP Registry
+curl "https://registry.modelcontextprotocol.io/v0/servers?search=datagraph" | \
+  jq '.servers[] | select(.server.version == "1.2.0")'
+```
+
 ## Support
 
-- GitHub Issues: https://github.com/kevinkells/datagraph.city/issues
+- GitHub Issues: https://github.com/team-earth/datagraph-city-mcp-server/issues
 - MCP Registry Docs: https://modelcontextprotocol.io/docs
-- NPM Package: https://www.npmjs.com/package/datagraph-mcp-server
+- NPM Package: https://www.npmjs.com/package/datagraph-city-mcp-server
 
 

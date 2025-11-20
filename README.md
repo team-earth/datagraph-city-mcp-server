@@ -2,6 +2,8 @@
 
 Model Context Protocol server for accessing DataGraph API from Claude Desktop, ChatGPT, and other MCP-compatible clients.
 
+> **📦 For Maintainers**: Publishing a new version? See [PUBLISHING.md](./PUBLISHING.md) for the complete workflow using git subtree sync to team-earth repo.
+
 ## Installation
 
 ### 1. Install Dependencies
