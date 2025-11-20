@@ -2,81 +2,107 @@
 
 This guide explains how to publish the DataGraph MCP server to NPM and the MCP Registry.
 
+## ⚠️ IMPORTANT: Sync Workflow
+
+**DO NOT** publish from this monorepo (`kevinkells/datagraph.city`). The MCP server must be published from the `team-earth/datagraph-city-mcp-server` repository for GitHub OIDC authentication to work correctly.
+
+### Why?
+- MCP Registry uses GitHub OIDC to verify organization membership
+- OIDC authentication is based on the repository running the workflow
+- The workflow must run from `team-earth/*` to publish as `io.github.team-earth/datagraph`
+
 ## Overview
 
-The publishing process is **fully automated** via GitHub Actions. When you push a version tag, the workflow will:
+**Workflow**: Develop in monorepo → Sync to team-earth → Tag triggers publish
 
-1. ✅ Update version numbers in `package.json` and `server.json`
-2. ✅ Run tests (if any)
-3. ✅ Publish to NPM
-4. ✅ Publish to MCP Registry (using GitHub OIDC)
-5. ✅ Create a GitHub Release
+1. ✅ Develop and test in `/home/kkells/datagraph.city/mcp-server/`
+2. ✅ Commit changes to kevinkells/datagraph.city
+3. ✅ Sync to team-earth/datagraph-city-mcp-server (using git subtree)
+4. ✅ Create version tag on team-earth repo
+5. ✅ GitHub Actions automatically publishes to NPM + MCP Registry
 
 ## Prerequisites
 
-### One-Time Setup
+### One-Time Setup (Already Complete ✅)
 
-1. **NPM Token** (for publishing to NPM)
+1. **Git Remote** - `mcp-public` points to team-earth repo
    ```bash
-   # Login to NPM
-   npm login
-   
-   # Create an automation token
-   # Go to: https://www.npmjs.com/settings/YOUR_USERNAME/tokens
-   # Create a new "Automation" token
+   git remote add mcp-public git@github.com:team-earth/datagraph-city-mcp-server.git
    ```
 
-2. **Add NPM Token to GitHub Secrets**
-   - Go to: `https://github.com/kevinkells/datagraph.city/settings/secrets/actions`
-   - Click "New repository secret"
-   - Name: `NPM_TOKEN`
-   - Value: Your NPM automation token
+2. **NPM Token** - `NPM_TOKEN` secret configured in team-earth repo
+   - Token created at: https://www.npmjs.com/settings/kevinkells/tokens
+   - Added to: https://github.com/team-earth/datagraph-city-mcp-server/settings/secrets/actions
 
-3. **No MCP Registry Setup Needed!**
-   - GitHub Actions OIDC authentication is automatic
-   - No manual login or tokens required
+3. **GitHub Org Membership** - Public member of team-earth org
+   - Required for MCP Registry OIDC authentication
+   - Verified at: https://github.com/orgs/team-earth/people
+
+4. **Sync Script** - `/home/kkells/datagraph.city/scripts/sync-mcp-to-public.sh`
 
 ## Publishing a New Version
 
-### Step 1: Prepare Your Changes
-
-Make sure all your changes are committed:
+### Step 1: Develop and Test in Monorepo
 
 ```bash
-cd /root/datagraph.city/mcp-server
-git add .
-git commit -m "Prepare for v1.0.0 release"
+cd /home/kkells/datagraph.city/mcp-server
+# Edit files (index.js, package.json, etc.)
+# Test locally
+node index.js
+```
+
+### Step 2: Commit Changes to Monorepo
+
+```bash
+cd /home/kkells/datagraph.city
+git add mcp-server/
+git commit -m "feat: Add new MCP feature"
 git push origin main
 ```
 
-### Step 2: Create and Push a Version Tag
+### Step 3: Sync to Team-Earth Repo
 
+**Option A: Using Sync Script (Recommended)**
 ```bash
-# For version 1.0.0
-git tag mcp-v1.0.0
-
-# Push the tag (this triggers the workflow)
-git push origin mcp-v1.0.0
+cd /home/kkells/datagraph.city
+./scripts/sync-mcp-to-public.sh
 ```
 
-**Tag Format:** `mcp-v{VERSION}` (e.g., `mcp-v1.0.0`, `mcp-v1.1.0`, `mcp-v2.0.0`)
+**Option B: Manual Sync**
+```bash
+cd /home/kkells/datagraph.city
+git subtree split --prefix=mcp-server | xargs -I {} git push mcp-public {}:main --force
+```
 
-### Step 3: Monitor the Workflow
+### Step 4: Create and Push Version Tag
 
-1. Go to: https://github.com/kevinkells/datagraph.city/actions
+```bash
+cd /home/kkells/datagraph.city
+
+# For version 1.2.0
+git subtree split --prefix=mcp-server | xargs -I {} git push mcp-public {}:refs/tags/v1.2.0
+```
+
+**Tag Format:** `v{VERSION}` (e.g., `v1.0.0`, `v1.1.0`, `v2.0.0`)
+
+⚠️ **Note**: Use `v*` not `mcp-v*` for team-earth repo tags!
+
+### Step 5: Monitor the Workflow
+
+1. Go to: https://github.com/team-earth/datagraph-city-mcp-server/actions
 2. Watch the "Publish MCP Server" workflow
 3. Check that all steps complete successfully
 
-### Step 4: Verify Publication
+### Step 6: Verify Publication
 
 After the workflow completes:
 
-1. **Check NPM**: https://www.npmjs.com/package/datagraph-mcp-server
+1. **Check NPM**: https://www.npmjs.com/package/datagraph-city-mcp-server
 2. **Check MCP Registry**:
    ```bash
-   curl "https://registry.modelcontextprotocol.io/v0/servers?search=io.github.kevinkells/datagraph"
+   curl "https://registry.modelcontextprotocol.io/v0/servers?search=datagraph" | jq '.servers[] | select(.server.name == "io.github.team-earth/datagraph")'
    ```
-3. **Check GitHub Release**: https://github.com/kevinkells/datagraph.city/releases
+3. **Check GitHub Release**: https://github.com/team-earth/datagraph-city-mcp-server/releases
 
 ## Version Numbering
 
