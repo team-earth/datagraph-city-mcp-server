@@ -6,11 +6,12 @@ All notable changes to the DataGraph MCP Server will be documented in this file.
 
 ### Added
 - **NYC Urban Datasets**: Full integration of 5 major NYC datasets
-  - DOB Building Permits (31,001 records from DOB NOW system)
+  - DOB Building Permits (4,806,614 permits across 445,923 buildings)
   - Property Sales (53,464 real estate transactions)
   - Crime Data (100,000 NYPD complaints with demographics)
   - Demographics (195 neighborhood tabulation areas)
-  - PLUTO Property Data (complete NYC property information)
+  - PLUTO Property Data (859,284 tax lot parcels with 505,869 property owners)
+- **Total Production Dataset**: 6.9M+ interconnected nodes
 - **PLUTO Integration**: Address-to-BBL (Borough-Block-Lot) lookup system
   - Critical for cross-referencing properties across datasets
   - Enables address-based queries with 100% coverage (vs 18% for DOB permits alone)
