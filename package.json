@@ -4,7 +4,7 @@
     "description": "Model Context Protocol server for DataGraph API. Query NYC urban data (subway, DOB permits, property sales, crime, demographics) and civic programs (Un-Lonely NYC, KC violence prevention) using GOSR framework.",
     "main": "index.js",
     "type": "module",
-    "mcpName": "io.github.kevinkells/datagraph",
+    "mcpName": "io.github.team-earth/datagraph",
     "bin": {
         "datagraph-city-mcp-server": "./index.js"
     },
@@ -33,8 +33,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/kevinkells/datagraph.city.git",
-        "directory": "mcp-server"
+        "url": "https://github.com/team-earth/datagraph-city-mcp-server.git"
     },
     "homepage": "https://datagraph.city",
     "dependencies": {

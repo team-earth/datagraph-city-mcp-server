@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "name": "io.github.kevinkells/datagraph",
+  "name": "io.github.team-earth/datagraph",
   "title": "DataGraph",
   "description": "Urban intelligence knowledge graph. Structured city data for civic problem-solving.",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "homepage": "https://datagraph.city",
   "license": "MIT",
   "keywords": [
@@ -19,8 +19,8 @@
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "datagraph-mcp-server",
-      "version": "1.0.0",
+      "identifier": "datagraph-city-mcp-server",
+      "version": "1.2.0",
       "transport": {
         "type": "stdio"
       }
