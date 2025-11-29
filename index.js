@@ -31,6 +31,10 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import {
     CallToolRequestSchema,
     ListToolsRequestSchema,
+    ListPromptsRequestSchema,
+    GetPromptRequestSchema,
+    ListResourcesRequestSchema,
+    ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import dotenv from 'dotenv';
 
@@ -48,11 +52,13 @@ if (!API_KEY) {
 const server = new Server(
     {
         name: 'datagraph',
-        version: '1.1.0',
+        version: '1.2.1',
     },
     {
         capabilities: {
             tools: {},
+            prompts: {},
+            resources: {},
         },
     }
 );
@@ -216,11 +222,306 @@ Use this to discover civic datasets and their structure before querying.`,
     },
 ];
 
+// Define available prompts
+const PROMPTS = [
+    {
+        name: 'explore_city_data',
+        description: 'Guided workflow to explore urban data: list cities, view schema, and query data',
+        arguments: [
+            {
+                name: 'city',
+                description: 'City code (default: "nyc")',
+                required: false,
+            },
+        ],
+    },
+    {
+        name: 'analyze_gosr_dataset',
+        description: 'Analyze a GOSR (Goal-Obstacle-Solution-Resource) dataset for civic problem-solving',
+        arguments: [
+            {
+                name: 'dataset',
+                description: 'Dataset name (e.g., "Un-Lonely NYC", "Kansas City Violence Prevention")',
+                required: true,
+            },
+            {
+                name: 'focus',
+                description: 'Specific focus area (e.g., "social isolation", "community programs", "violence prevention")',
+                required: false,
+            },
+        ],
+    },
+    {
+        name: 'cypher_query_builder',
+        description: 'Step-by-step guide to build a Cypher query from schema',
+        arguments: [
+            {
+                name: 'city',
+                description: 'City code (default: "nyc")',
+                required: false,
+            },
+            {
+                name: 'user_question',
+                description: 'What you want to find out',
+                required: true,
+            },
+        ],
+    },
+];
+
+// Define available resources
+const RESOURCES = [
+    {
+        uri: 'datagraph://cities/list',
+        name: 'Available Cities',
+        description: 'List of all cities with available datasets',
+        mimeType: 'application/json',
+    },
+    {
+        uri: 'datagraph://datasets/gosr',
+        name: 'GOSR Datasets',
+        description: 'All Goal-Obstacle-Solution-Resource datasets for civic problem-solving',
+        mimeType: 'application/json',
+    },
+    {
+        uri: 'datagraph://schema/nyc',
+        name: 'NYC Graph Schema',
+        description: 'Neo4j graph schema for New York City data',
+        mimeType: 'application/json',
+    },
+    {
+        uri: 'datagraph://schema/kc',
+        name: 'Kansas City Graph Schema',
+        description: 'Neo4j graph schema for Kansas City data',
+        mimeType: 'application/json',
+    },
+    {
+        uri: 'datagraph://usage/stats',
+        name: 'API Usage Statistics',
+        description: 'Your current API usage and quota information',
+        mimeType: 'application/json',
+    },
+];
+
 // List available tools
 server.setRequestHandler(ListToolsRequestSchema, async () => {
     return {
         tools: TOOLS,
     };
+});
+
+// List available prompts
+server.setRequestHandler(ListPromptsRequestSchema, async () => {
+    return {
+        prompts: PROMPTS,
+    };
+});
+
+// Handle prompt requests
+server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+    const { name, arguments: args } = request.params;
+
+    switch (name) {
+        case 'explore_city_data': {
+            const city = args?.city || 'nyc';
+            return {
+                messages: [
+                    {
+                        role: 'user',
+                        content: {
+                            type: 'text',
+                            text: `I want to explore urban data for ${city}. Let's start by:
+1. Listing available cities and their datasets
+2. Getting the graph schema for ${city}
+3. Understanding what kinds of questions I can ask
+
+Please guide me through this process.`,
+                        },
+                    },
+                ],
+            };
+        }
+
+        case 'analyze_gosr_dataset': {
+            const dataset = args?.dataset;
+            const focus = args?.focus || 'general overview';
+            
+            if (!dataset) {
+                throw new Error('dataset argument is required');
+            }
+
+            return {
+                messages: [
+                    {
+                        role: 'user',
+                        content: {
+                            type: 'text',
+                            text: `I want to analyze the "${dataset}" GOSR dataset, focusing on: ${focus}.
+
+Please help me:
+1. List available GOSR datasets to confirm this one exists
+2. Get the schema to understand the data structure
+3. Query for relevant Goals, Obstacles, Solutions, and Resources
+4. Summarize key insights and patterns
+
+Use the GOSR framework (gosr.ai) to structure the analysis.`,
+                        },
+                    },
+                ],
+            };
+        }
+
+        case 'cypher_query_builder': {
+            const city = args?.city || 'nyc';
+            const user_question = args?.user_question;
+            
+            if (!user_question) {
+                throw new Error('user_question argument is required');
+            }
+
+            return {
+                messages: [
+                    {
+                        role: 'user',
+                        content: {
+                            type: 'text',
+                            text: `I want to query ${city} data to answer: "${user_question}"
+
+Please help me:
+1. Get the graph schema for ${city}
+2. Understand what node labels and relationships are available
+3. Generate an appropriate Cypher query based on my question
+4. Execute the query and interpret the results
+
+Remember to include LIMIT clauses and ensure read-only operations.`,
+                        },
+                    },
+                ],
+            };
+        }
+
+        default:
+            throw new Error(`Unknown prompt: ${name}`);
+    }
+});
+
+// List available resources
+server.setRequestHandler(ListResourcesRequestSchema, async () => {
+    return {
+        resources: RESOURCES,
+    };
+});
+
+// Handle resource reads
+server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    const { uri } = request.params;
+
+    try {
+        switch (uri) {
+            case 'datagraph://cities/list': {
+                const response = await fetch(`${API_URL}/cities`, {
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch cities');
+                }
+
+                const cities = await response.json();
+
+                return {
+                    contents: [
+                        {
+                            uri,
+                            mimeType: 'application/json',
+                            text: JSON.stringify(cities, null, 2),
+                        },
+                    ],
+                };
+            }
+
+            case 'datagraph://datasets/gosr': {
+                const response = await fetch(`${API_URL}/datasets`, {
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch datasets');
+                }
+
+                const datasets = await response.json();
+
+                return {
+                    contents: [
+                        {
+                            uri,
+                            mimeType: 'application/json',
+                            text: JSON.stringify(datasets, null, 2),
+                        },
+                    ],
+                };
+            }
+
+            case 'datagraph://schema/nyc':
+            case 'datagraph://schema/kc': {
+                const city = uri.split('/').pop();
+                const response = await fetch(`${API_URL}/api/${city}/schema`, {
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch schema for ${city}`);
+                }
+
+                const schema = await response.json();
+
+                return {
+                    contents: [
+                        {
+                            uri,
+                            mimeType: 'application/json',
+                            text: JSON.stringify(schema, null, 2),
+                        },
+                    ],
+                };
+            }
+
+            case 'datagraph://usage/stats': {
+                const response = await fetch(`${API_URL}/usage`, {
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch usage stats');
+                }
+
+                const stats = await response.json();
+
+                return {
+                    contents: [
+                        {
+                            uri,
+                            mimeType: 'application/json',
+                            text: JSON.stringify(stats, null, 2),
+                        },
+                    ],
+                };
+            }
+
+            default:
+                throw new Error(`Unknown resource: ${uri}`);
+        }
+    } catch (error) {
+        throw new Error(`Failed to read resource ${uri}: ${error.message}`);
+    }
 });
 
 // Handle tool calls

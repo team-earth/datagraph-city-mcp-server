@@ -1,8 +1,21 @@
 # DataGraph MCP Server
 
-Model Context Protocol server for accessing DataGraph API from Claude Desktop, ChatGPT, and other MCP-compatible clients.
+## ⚠️ FOR DEVELOPERS/LLMs: READ THIS FIRST
 
-> **📦 For Maintainers**: Publishing a new version? See [PUBLISHING.md](./PUBLISHING.md) for the complete workflow using git subtree sync to team-earth repo.
+**You are in the MONOREPO** (`mcp-server/` subdirectory)
+
+- ✅ **CORRECT**: Make changes HERE in the monorepo
+- ✅ **CORRECT**: Commit to `kevinkells/datagraph.city` repo
+- ❌ **WRONG**: Do NOT edit the public `team-earth/datagraph-city-mcp-server` repo directly
+- ❌ **WRONG**: That repo is sync target only, not development location
+
+**Publishing workflow:** Edit here → Commit → Sync to team-earth → Tag → Auto-publish
+
+See [PUBLISHING.md](./PUBLISHING.md) for complete instructions.
+
+---
+
+Model Context Protocol server for accessing DataGraph API from Claude Desktop, ChatGPT, and other MCP-compatible clients.
 
 ## Installation
 
