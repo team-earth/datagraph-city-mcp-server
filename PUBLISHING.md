@@ -1,5 +1,20 @@
 # Publishing DataGraph MCP Server
 
+## ✅ Last Successful Publish: v1.2.1 (Nov 29, 2025)
+
+**What worked:**
+1. Edit in monorepo: `/datagraph.city/mcp-server/`
+2. Commit to `kevinkells/datagraph.city`
+3. Push: `git push origin main`
+4. Sync: `git subtree push --prefix=mcp-server mcp-public main`
+5. Pull in public repo: `cd datagraph-city-mcp-server && git pull`
+6. Tag: `git tag v1.2.1` (format: `v*` NOT `mcp-v*`)
+7. Push tag: `git push origin v1.2.1`
+8. Monitor: https://github.com/team-earth/datagraph-city-mcp-server/actions
+9. ✅ Published to NPM and MCP Registry successfully
+
+---
+
 This guide explains how to publish the DataGraph MCP server to NPM and the MCP Registry.
 
 ## ⚠️ IMPORTANT: Sync Workflow
