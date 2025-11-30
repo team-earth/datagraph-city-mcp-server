@@ -194,7 +194,7 @@ Why? Only 18% of DOB permits have addresses; PLUTO provides universal address→
                     type: 'string',
                     description: 'User question or description. Used for logging and natural language fallback.',
                 },
-                city: {
+                locality: {
                     type: 'string',
                     description: 'Locality code (REQUIRED): "nyc" (NYC general), "kc" (Kansas City), "rust-belt" (Western PA), "unlonely-nyc" (NYC loneliness programs)',
                     enum: ['nyc', 'kc', 'rust-belt', 'unlonely-nyc'],
@@ -268,9 +268,9 @@ const PROMPTS = [
         description: 'Guided workflow to explore urban data: list localities, view schema, and query data',
         arguments: [
             {
-                name: 'city',
-                description: 'City code (default: "nyc")',
-                required: false,
+                name: 'locality',
+                description: 'Locality code: "nyc", "kc", "rust-belt", "unlonely-nyc"',
+                required: true,
             },
         ],
     },
