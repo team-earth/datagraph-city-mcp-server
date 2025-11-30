@@ -3,7 +3,7 @@
   "name": "io.github.team-earth/datagraph",
   "title": "DataGraph",
   "description": "Urban intelligence knowledge graph. Structured city data for civic problem-solving.",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "homepage": "https://datagraph.city",
   "license": "MIT",
   "keywords": [
@@ -20,7 +20,7 @@
     {
       "registryType": "npm",
       "identifier": "datagraph-city-mcp-server",
-      "version": "1.2.1",
+      "version": "1.2.3",
       "transport": {
         "type": "stdio"
       }
