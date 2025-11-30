@@ -88,6 +88,10 @@ GOSR is a participatory problem structuring method:
 - Resources are real, existing programs
 - Actors are the organizations executing Resources
 
+**Data Structure:**
+- Obstacles can have solutions (leaf nodes) OR child obstacles (parent nodes), but not both
+- Child obstacles are connected via `HAS_SUB_OBSTACLE` relationships in Neo4j
+
 ## Installation
 
 ### 1. Install Dependencies
