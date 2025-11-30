@@ -17,6 +17,21 @@ See [PUBLISHING.md](./PUBLISHING.md) for complete instructions.
 
 Model Context Protocol server for accessing DataGraph API from Claude Desktop, ChatGPT, and other MCP-compatible clients.
 
+## GOSR Framework
+
+GOSR (Goal-Obstacles-Solutions-Resources) is a participatory problem structuring method:
+
+- **Goal** (singular): The aspirational future picture for a community
+- **Obstacles** (plural): Barriers preventing that future from being realized
+- **Solutions** (plural): Potential strategies to overcome obstacles IF implemented (these are NOT actual programs)
+- **Resources** (plural): Actual programs and initiatives currently operating in the community
+- **Actors**: Organizations that run the Resources (in the data model but not explicitly in the GOSR acronym)
+
+**Critical Distinctions:**
+- Solutions are theoretical/potential interventions
+- Resources are real, existing programs
+- Actors are the organizations executing Resources
+
 ## Installation
 
 ### 1. Install Dependencies

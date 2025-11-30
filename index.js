@@ -6,10 +6,17 @@
  * Model Context Protocol server that provides access to DataGraph API
  * for use with Claude Desktop, ChatGPT, and other MCP-compatible clients.
  * 
+ * GOSR Framework (Goal-Obstacles-Solutions-Resources):
+ * - Goal: A single aspirational future picture (singular)
+ * - Obstacles: Barriers preventing the goal (plural - what stands in the way)
+ * - Solutions: POTENTIAL strategies to overcome obstacles if implemented (plural - not actual programs)
+ * - Resources: ACTUAL programs/initiatives currently operating (plural)
+ * - Actors: Organizations running the Resources (not in GOSR acronym but critical to the model)
+ * 
  * Available Datasets:
  * - NYC Subway: 445 stations with locations and lines
- * - NYC GOSR (Un-Lonely NYC): 7,514 programs addressing urban loneliness
- * - Kansas City GOSR: 149 violence prevention resources
+ * - NYC GOSR (Un-Lonely NYC): 7,514 Resources (actual programs) addressing urban loneliness
+ * - Kansas City GOSR: 149 Resources (violence prevention programs) run by 81 Actors
  * - NYC DOB Permits: 4.8M building permits with locations and work types
  * - NYC PLUTO: 858K property parcels with owner, zoning, building characteristics, and address-to-BBL mappings
  * - NYC Property Sales: 53,464 real estate transactions with prices
@@ -37,6 +44,13 @@ import {
     ReadResourceRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import dotenv from 'dotenv';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packageJson = JSON.parse(readFileSync(join(__dirname, 'package.json'), 'utf-8'));
 
 dotenv.config();
 
@@ -52,7 +66,7 @@ if (!API_KEY) {
 const server = new Server(
     {
         name: 'datagraph',
-        version: '1.2.1',
+        version: '1.2.2',
     },
     {
         capabilities: {
@@ -65,6 +79,14 @@ const server = new Server(
 
 // Define available tools
 const TOOLS = [
+    {
+        name: 'get_server_info',
+        description: 'Get DataGraph MCP server version and metadata information',
+        inputSchema: {
+            type: 'object',
+            properties: {},
+        },
+    },
     {
         name: 'get_city_schema',
         description: `Get the Neo4j graph schema for a city. **ALWAYS CALL THIS FIRST** before querying.
@@ -197,9 +219,11 @@ Why? Only 18% of DOB permits have addresses; PLUTO provides universal address→
 **NYC Infrastructure:**
 - **Subway**: MTA station data with lines and locations (445 stations)
 
-**GOSR (Goal-Obstacle-Solution-Resource):**
-- **NYC Un-Lonely**: Urban loneliness and social isolation programs (7,514 programs)
-- **Kansas City**: Violence prevention programs and community resources (149 programs)
+**GOSR (Goal-Obstacles-Solutions-Resources):**
+GOSR Framework: Goal (singular aspirational future), Obstacles (plural barriers), Solutions (plural potential strategies if implemented, NOT actual programs), Resources (plural actual programs currently operating), Actors (organizations running Resources, in model but not in acronym)
+
+- **NYC Un-Lonely**: 7,514 Resources (actual programs addressing loneliness), mapped to Solutions and Obstacles
+- **Kansas City**: 149 Resources (violence prevention programs) run by 81 Actors
 
 Use this to discover civic datasets and their structure before querying.`,
         inputSchema: {
@@ -530,6 +554,30 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
     try {
         switch (name) {
+            case 'get_server_info': {
+                return {
+                    content: [
+                        {
+                            type: 'text',
+                            text: JSON.stringify({
+                                name: packageJson.name,
+                                version: packageJson.version,
+                                description: packageJson.description,
+                                homepage: packageJson.homepage,
+                                repository: packageJson.repository.url,
+                                gosr_framework: {
+                                    goal: "A single aspirational future picture (singular)",
+                                    obstacles: "Barriers preventing the goal (plural)",
+                                    solutions: "POTENTIAL strategies to overcome obstacles if implemented (plural - NOT actual programs)",
+                                    resources: "ACTUAL programs/initiatives currently operating (plural)",
+                                    actors: "Organizations running the Resources (in model but not in GOSR acronym)"
+                                }
+                            }, null, 2),
+                        },
+                    ],
+                };
+            }
+
             case 'query_city_data': {
                 const { query, city = 'nyc', category, limit = 10, cypher_query, cypher_params } = args;
 
