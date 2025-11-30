@@ -90,7 +90,8 @@ GOSR is a participatory problem structuring method:
 
 **Data Structure:**
 - Obstacles can have solutions (leaf nodes) OR child obstacles (parent nodes), but not both
-- Child obstacles are connected via `HAS_SUB_OBSTACLE` relationships in Neo4j
+- Both Goal→Obstacle and Obstacle→Obstacle use the `HAS_OBSTACLE` relationship type
+- To find parent obstacles: `MATCH (parent:Obstacle)-[:HAS_OBSTACLE]->(child:Obstacle)`
 
 ## Installation
 
