@@ -1,6 +1,19 @@
 # Publishing DataGraph MCP Server
 
-## ✅ Last Successful Publish: v1.2.1 (Nov 29, 2025)
+## ⚠️ CRITICAL: Version Bump Procedure
+
+**BEFORE PUBLISHING:** Read [VERSION_BUMP_PROCEDURE.md](./VERSION_BUMP_PROCEDURE.md)
+
+**You MUST update THREE files when bumping version:**
+1. `package.json` - Line 3
+2. `index.js` - Server constructor
+3. `server.json` - Lines 6 AND 23 ⚠️ **OFTEN FORGOTTEN**
+
+**Failure to update `server.json` causes:** ✅ npm publish succeeds, ❌ MCP Registry publish fails with "duplicate version"
+
+---
+
+## ✅ Last Successful Publish: v1.2.3 (Nov 30, 2025)
 
 **What worked:**
 1. Edit in monorepo: `/datagraph.city/mcp-server/`
