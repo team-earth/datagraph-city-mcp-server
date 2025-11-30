@@ -259,6 +259,18 @@ Use this to discover civic datasets and their structure before querying.`,
             properties: {},
         },
     },
+    {
+        name: 'list_datasets',
+        description: `List all available datasets with their exact names and locality codes.
+
+**CALL THIS FIRST** when you need dataset names. Returns the locality→dataset mapping.
+
+Example: If user asks about "rust-belt", this shows the exact dataset name is "rust-belt-initiatives".`,
+        inputSchema: {
+            type: 'object',
+            properties: {},
+        },
+    },
 ];
 
 // Define available prompts
