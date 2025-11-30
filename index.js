@@ -15,15 +15,30 @@
  * - Resources: ACTUAL programs/initiatives currently operating (plural)
  * - Actors: Organizations running the Resources (not in GOSR acronym but critical to the model)
  * 
- * Available Datasets:
+ * Available Datasets (by locality code):
+ * 
+ * Locality: 'nyc' (New York City - General Data)
  * - NYC Subway: 445 stations with locations and lines
- * - NYC GOSR (Un-Lonely NYC): 7,514 Resources (actual programs) addressing urban loneliness
- * - Kansas City GOSR: 149 Resources (violence prevention programs) run by 81 Actors
  * - NYC DOB Permits: 4.8M building permits with locations and work types
  * - NYC PLUTO: 858K property parcels with owner, zoning, building characteristics, and address-to-BBL mappings
  * - NYC Property Sales: 53,464 real estate transactions with prices
  * - NYC Crime Data: 100,000 NYPD complaints with demographics
  * - NYC Demographics: 195 neighborhoods with population statistics
+ * 
+ * Locality: 'unlonely-nyc' (Un-Lonely NYC - GOSR Loneliness Programs)
+ * - Dataset: unlonely-nyc
+ * - 7,514 Resources (actual programs) addressing urban loneliness
+ * - GOSR Framework: 1 Goal, multiple Obstacles, Solutions, Resources, and Actors
+ * 
+ * Locality: 'kc' (Kansas City - GOSR Violence Prevention)
+ * - Dataset: kansas-city-violence-prevention
+ * - 149 Resources (violence prevention programs) run by 81 Actors
+ * - GOSR Framework: Goals, Obstacles, Solutions, Resources, and Actors
+ * 
+ * Locality: 'rust-belt' (Western Pennsylvania - GOSR Civic Infrastructure)
+ * - Dataset: rust-belt-initiatives
+ * - 5,368 Resources (civic programs) addressing community infrastructure
+ * - GOSR Framework: 8 Goals covering gathering spaces, economic development, etc.
  * 
  * Example Queries:
  * - "Find programs addressing social isolation in NYC"
@@ -124,9 +139,8 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
             properties: {
                 city: {
                     type: 'string',
-                    description: 'City code: "nyc" (New York), "kc" (Kansas City), etc. (default: "nyc")',
-                    default: 'nyc',
-                    enum: ['nyc', 'kc'],
+                    description: 'Locality code (REQUIRED): "nyc" (NYC general), "kc" (Kansas City), "rust-belt" (Western PA), "unlonely-nyc" (NYC loneliness programs)',
+                    enum: ['nyc', 'kc', 'rust-belt', 'unlonely-nyc'],
                 },
             },
         },
@@ -182,9 +196,8 @@ Why? Only 18% of DOB permits have addresses; PLUTO provides universal address→
                 },
                 city: {
                     type: 'string',
-                    description: 'City code: "nyc" (New York), "kc" (Kansas City), etc. (default: "nyc")',
-                    default: 'nyc',
-                    enum: ['nyc', 'kc'],
+                    description: 'Locality code (REQUIRED): "nyc" (NYC general), "kc" (Kansas City), "rust-belt" (Western PA), "unlonely-nyc" (NYC loneliness programs)',
+                    enum: ['nyc', 'kc', 'rust-belt', 'unlonely-nyc'],
                 },
                 cypher_query: {
                     type: 'string',
@@ -263,7 +276,7 @@ const PROMPTS = [
     },
     {
         name: 'analyze_gosr_dataset',
-        description: 'Analyze a GOSR (Goal-Obstacle-Solution-Resource) dataset for civic problem-solving',
+        description: 'Analyze a GOSR (Goal-Obstacles-Solutions-Resources) dataset for civic problem-solving',
         arguments: [
             {
                 name: 'dataset',
@@ -306,7 +319,7 @@ const RESOURCES = [
     {
         uri: 'datagraph://datasets/gosr',
         name: 'GOSR Datasets',
-        description: 'All Goal-Obstacle-Solution-Resource datasets for civic problem-solving',
+        description: 'All Goal-Obstacles-Solutions-Resources datasets for civic problem-solving',
         mimeType: 'application/json',
     },
     {
@@ -349,7 +362,10 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
 
     switch (name) {
         case 'explore_city_data': {
-            const city = args?.city || 'nyc';
+            const city = args?.city;
+            if (!city) {
+                throw new Error('city argument is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
+            }
             return {
                 messages: [
                     {
@@ -398,9 +414,12 @@ Use the GOSR framework (gosr.ai) to structure the analysis.`,
         }
 
         case 'cypher_query_builder': {
-            const city = args?.city || 'nyc';
+            const city = args?.city;
             const user_question = args?.user_question;
             
+            if (!city) {
+                throw new Error('city argument is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
+            }
             if (!user_question) {
                 throw new Error('user_question argument is required');
             }
@@ -582,7 +601,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             }
 
             case 'query_city_data': {
-                const { query, city = 'nyc', category, limit = 10, cypher_query, cypher_params } = args;
+                const { query, city, category, limit = 10, cypher_query, cypher_params } = args;
+                
+                if (!city) {
+                    throw new Error('city parameter is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
+                }
 
                 const requestBody = { query, category, limit };
 
@@ -621,7 +644,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             }
 
             case 'get_city_schema': {
-                const { city = 'nyc' } = args;
+                const { city } = args;
+                
+                if (!city) {
+                    throw new Error('city parameter is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
+                }
 
                 const response = await fetch(`${API_URL}/api/${city}/schema`, {
                     headers: {
