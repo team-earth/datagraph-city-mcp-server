@@ -619,15 +619,6 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     throw new Error('locality parameter is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
                 }
 
-                // Map dataset names to locality codes (fuzzy matching)
-                const datasetToLocality = {
-                    'rust-belt-initiatives': 'rust-belt',
-                    'kansas-city-violence-prevention': 'kc',
-                    'unlonely-nyc': 'unlonely-nyc',
-                };
-                
-                const normalizedLocality = datasetToLocality[locality] || locality;
-
                 const requestBody = { query, category, limit };
 
                 // If Cypher query is provided, include it
@@ -638,7 +629,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     }
                 }
 
-                const response = await fetch(`${API_URL}/api/${normalizedLocality}/query`, {
+                const response = await fetch(`${API_URL}/api/${locality}/query`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${API_KEY}`,
