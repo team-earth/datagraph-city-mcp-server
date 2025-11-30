@@ -91,8 +91,8 @@ GOSR is a participatory problem structuring method:
 **Data Structure:**
 - Obstacles can have solutions (leaf nodes) OR child obstacles (parent nodes), but not both
 - Both Goal→Obstacle and Obstacle→Obstacle use the `HAS_OBSTACLE` relationship type
-- To count parent obstacles: `MATCH (parent:Obstacle)-[:HAS_OBSTACLE]->(child:Obstacle) WHERE parent.dataset = 'your-dataset' RETURN COUNT(DISTINCT parent)`
-- To count child obstacles: `MATCH (parent:Obstacle)-[:HAS_OBSTACLE]->(child:Obstacle) WHERE parent.dataset = 'your-dataset' RETURN COUNT(child)`
+- Count parent obstacles: `MATCH (parent:Obstacle)-[:HAS_OBSTACLE]->(child:Obstacle) WHERE parent.dataset = 'your-dataset' RETURN COUNT(DISTINCT parent)`
+- Count child obstacles: `MATCH (parent:Obstacle)-[:HAS_OBSTACLE]->(child:Obstacle) WHERE parent.dataset = 'your-dataset' RETURN COUNT(child)`
 
 ## Installation
 
