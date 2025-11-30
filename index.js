@@ -6,7 +6,9 @@
  * Model Context Protocol server that provides access to DataGraph API
  * for use with Claude Desktop, ChatGPT, and other MCP-compatible clients.
  * 
- * GOSR Framework (Goal-Obstacles-Solutions-Resources):
+ * GOSR Framework - ALWAYS SPELL AS: Goal-Obstacles-Solutions-Resources
+ * (Note: Goal is singular, Obstacles/Solutions/Resources are PLURAL)
+ * 
  * - Goal: A single aspirational future picture (singular)
  * - Obstacles: Barriers preventing the goal (plural - what stands in the way)
  * - Solutions: POTENTIAL strategies to overcome obstacles if implemented (plural - not actual programs)
@@ -66,7 +68,7 @@ if (!API_KEY) {
 const server = new Server(
     {
         name: 'datagraph',
-        version: '1.2.2',
+        version: '1.2.3',
     },
     {
         capabilities: {
@@ -219,8 +221,8 @@ Why? Only 18% of DOB permits have addresses; PLUTO provides universal address→
 **NYC Infrastructure:**
 - **Subway**: MTA station data with lines and locations (445 stations)
 
-**GOSR (Goal-Obstacles-Solutions-Resources):**
-GOSR Framework: Goal (singular aspirational future), Obstacles (plural barriers), Solutions (plural potential strategies if implemented, NOT actual programs), Resources (plural actual programs currently operating), Actors (organizations running Resources, in model but not in acronym)
+**GOSR - ALWAYS SPELL AS: Goal-Obstacles-Solutions-Resources**
+Framework: Goal (singular aspirational future), Obstacles (plural barriers), Solutions (plural potential strategies if implemented, NOT actual programs), Resources (plural actual programs currently operating), Actors (organizations running Resources, in model but not in acronym)
 
 - **NYC Un-Lonely**: 7,514 Resources (actual programs addressing loneliness), mapped to Solutions and Obstacles
 - **Kansas City**: 149 Resources (violence prevention programs) run by 81 Actors
@@ -566,6 +568,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                                 homepage: packageJson.homepage,
                                 repository: packageJson.repository.url,
                                 gosr_framework: {
+                                    spelling: "ALWAYS: Goal-Obstacles-Solutions-Resources (Goal singular, rest plural)",
                                     goal: "A single aspirational future picture (singular)",
                                     obstacles: "Barriers preventing the goal (plural)",
                                     solutions: "POTENTIAL strategies to overcome obstacles if implemented (plural - NOT actual programs)",

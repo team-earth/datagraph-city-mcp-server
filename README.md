@@ -19,7 +19,9 @@ Model Context Protocol server for accessing DataGraph API from Claude Desktop, C
 
 ## GOSR Framework
 
-GOSR (Goal-Obstacles-Solutions-Resources) is a participatory problem structuring method:
+**ALWAYS SPELL AS: Goal-Obstacles-Solutions-Resources (GOSR)**
+
+GOSR is a participatory problem structuring method:
 
 - **Goal** (singular): The aspirational future picture for a community
 - **Obstacles** (plural): Barriers preventing that future from being realized
