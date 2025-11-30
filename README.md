@@ -194,9 +194,21 @@ Claude will automatically use the DataGraph MCP server to query the data.
 
 ## Available Datasets
 
+**IMPORTANT: Use `list_datasets` tool to get exact dataset names!**
+
+### Locality→Dataset Mapping
+
+| Locality Code | Dataset Name | Description |
+|---------------|--------------|-------------|
+| `nyc` | (multiple datasets) | NYC subway, permits, property data, crime, demographics |
+| `unlonely-nyc` | `unlonely-nyc` | 7,514 programs addressing urban loneliness (GOSR) |
+| `kc` | `kansas-city-violence-prevention` | 149 violence prevention programs (GOSR) |
+| `rust-belt` | `rust-belt-initiatives` | 5,368 civic infrastructure programs (GOSR) |
+
+### Dataset Details
+
 **New York City (nyc):**
 - **Subway**: 445 MTA stations with lines and locations
-- **GOSR (Un-Lonely NYC)**: 7,514 programs addressing urban loneliness
 - **DOB Permits**: 856,480 building permits from DOB NOW (March 2021-present)
   - Source: NYC Open Data `rbx6-tga4` - DOB NOW: Build - Approved Permits
   - Includes work types, costs, dates, applicants, owners, building details
@@ -204,10 +216,27 @@ Claude will automatically use the DataGraph MCP server to query the data.
 - **Crime Data**: 100,000 NYPD complaints with demographics
 - **Demographics**: 195 neighborhoods with population statistics
 
+**Un-Lonely NYC (unlonely-nyc):**
+- **Dataset**: `unlonely-nyc`
+- **GOSR**: 7,514 programs addressing urban loneliness
+
 **Kansas City (kc):**
+- **Dataset**: `kansas-city-violence-prevention`
 - **GOSR**: 149 violence prevention and community resources
 
+**Rust Belt (rust-belt):**
+- **Dataset**: `rust-belt-initiatives`
+- **GOSR**: 5,368 civic infrastructure programs
+
 ## Available Tools
+
+### `list_datasets`
+
+**CALL THIS FIRST** to get exact dataset names and locality codes.
+
+Returns the locality→dataset mapping so you know the exact dataset name to use in queries.
+
+Example: User asks about "rust-belt" → tool shows dataset name is "rust-belt-initiatives"
 
 ### `query_city_data`
 
