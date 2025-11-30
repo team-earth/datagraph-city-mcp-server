@@ -215,7 +215,7 @@ Query urban data using natural language.
 
 **Parameters:**
 - `query` (required): Natural language query
-- `city` (optional): City code (default: "nyc")
+- `locality` (optional): Locality code (default: "nyc")
 - `category` (optional): Filter by category
 - `limit` (optional): Max results (default: 10)
 
@@ -223,7 +223,7 @@ Query urban data using natural language.
 ```json
 {
   "query": "Properties under $800K in Brooklyn",
-  "city": "nyc",
+  "locality": "nyc",
   "limit": 5
 }
 ```
