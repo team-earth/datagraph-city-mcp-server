@@ -105,8 +105,8 @@ const TOOLS = [
         },
     },
     {
-        name: 'get_city_schema',
-        description: `Get the Neo4j graph schema for a city. **ALWAYS CALL THIS FIRST** before querying.
+        name: 'get_locality_schema',
+        description: `Get the Neo4j graph schema for a locality. **ALWAYS CALL THIS FIRST** before querying.
         
 Returns: node labels, relationships, properties, indexes, sample Cypher queries, and security constraints.
 
@@ -137,7 +137,7 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
         inputSchema: {
             type: 'object',
             properties: {
-                city: {
+                locality: {
                     type: 'string',
                     description: 'Locality code (REQUIRED): "nyc" (NYC general), "kc" (Kansas City), "rust-belt" (Western PA), "unlonely-nyc" (NYC loneliness programs)',
                     enum: ['nyc', 'kc', 'rust-belt', 'unlonely-nyc'],
@@ -146,8 +146,8 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
         },
     },
     {
-        name: 'query_city_data',
-        description: `Execute queries against city data. **BEST PRACTICE: Generate Cypher from schema rather than using natural language.**
+        name: 'query_locality_data',
+        description: `Execute queries against locality data. **BEST PRACTICE: Generate Cypher from schema rather than using natural language.**
 
 **Two modes:**
 1. **Cypher (RECOMMENDED)**: Generate Cypher after calling get_city_schema. More reliable and expressive.
@@ -244,9 +244,9 @@ Use this to discover civic datasets and their structure before querying.`,
         inputSchema: {
             type: 'object',
             properties: {
-                city: {
+                locality: {
                     type: 'string',
-                    description: 'Filter by city name (optional)',
+                    description: 'Filter by locality code (optional)',
                 },
             },
         },
@@ -264,8 +264,8 @@ Use this to discover civic datasets and their structure before querying.`,
 // Define available prompts
 const PROMPTS = [
     {
-        name: 'explore_city_data',
-        description: 'Guided workflow to explore urban data: list cities, view schema, and query data',
+        name: 'explore_locality_data',
+        description: 'Guided workflow to explore urban data: list localities, view schema, and query data',
         arguments: [
             {
                 name: 'city',
@@ -295,9 +295,9 @@ const PROMPTS = [
         description: 'Step-by-step guide to build a Cypher query from schema',
         arguments: [
             {
-                name: 'city',
-                description: 'City code (default: "nyc")',
-                required: false,
+                name: 'locality',
+                description: 'Locality code: "nyc", "kc", "rust-belt", "unlonely-nyc"',
+                required: true,
             },
             {
                 name: 'user_question',
@@ -361,10 +361,10 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
     const { name, arguments: args } = request.params;
 
     switch (name) {
-        case 'explore_city_data': {
-            const city = args?.city;
-            if (!city) {
-                throw new Error('city argument is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
+        case 'explore_locality_data': {
+            const locality = args?.locality;
+            if (!locality) {
+                throw new Error('locality argument is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
             }
             return {
                 messages: [
@@ -372,9 +372,9 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
                         role: 'user',
                         content: {
                             type: 'text',
-                            text: `I want to explore urban data for ${city}. Let's start by:
-1. Listing available cities and their datasets
-2. Getting the graph schema for ${city}
+                            text: `I want to explore urban data for ${locality}. Let's start by:
+1. Listing available localities and their datasets
+2. Getting the graph schema for ${locality}
 3. Understanding what kinds of questions I can ask
 
 Please guide me through this process.`,
@@ -414,11 +414,11 @@ Use the GOSR framework (gosr.ai) to structure the analysis.`,
         }
 
         case 'cypher_query_builder': {
-            const city = args?.city;
+            const locality = args?.locality;
             const user_question = args?.user_question;
             
-            if (!city) {
-                throw new Error('city argument is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
+            if (!locality) {
+                throw new Error('locality argument is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
             }
             if (!user_question) {
                 throw new Error('user_question argument is required');
@@ -430,10 +430,10 @@ Use the GOSR framework (gosr.ai) to structure the analysis.`,
                         role: 'user',
                         content: {
                             type: 'text',
-                            text: `I want to query ${city} data to answer: "${user_question}"
+                            text: `I want to query ${locality} data to answer: "${user_question}"
 
 Please help me:
-1. Get the graph schema for ${city}
+1. Get the graph schema for ${locality}
 2. Understand what node labels and relationships are available
 3. Generate an appropriate Cypher query based on my question
 4. Execute the query and interpret the results
@@ -513,15 +513,15 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
 
             case 'datagraph://schema/nyc':
             case 'datagraph://schema/kc': {
-                const city = uri.split('/').pop();
-                const response = await fetch(`${API_URL}/api/${city}/schema`, {
+                const locality = uri.split('/').pop();
+                const response = await fetch(`${API_URL}/api/${locality}/schema`, {
                     headers: {
                         'Authorization': `Bearer ${API_KEY}`,
                     },
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch schema for ${city}`);
+                    throw new Error(`Failed to fetch schema for ${locality}`);
                 }
 
                 const schema = await response.json();
@@ -600,11 +600,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 };
             }
 
-            case 'query_city_data': {
-                const { query, city, category, limit = 10, cypher_query, cypher_params } = args;
+            case 'query_locality_data': {
+                const { query, locality, category, limit = 10, cypher_query, cypher_params } = args;
                 
-                if (!city) {
-                    throw new Error('city parameter is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
+                if (!locality) {
+                    throw new Error('locality parameter is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
                 }
 
                 const requestBody = { query, category, limit };
@@ -617,7 +617,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                     }
                 }
 
-                const response = await fetch(`${API_URL}/api/${city}/query`, {
+                const response = await fetch(`${API_URL}/api/${locality}/query`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${API_KEY}`,
@@ -643,14 +643,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 };
             }
 
-            case 'get_city_schema': {
-                const { city } = args;
+            case 'get_locality_schema': {
+                const { locality } = args;
                 
-                if (!city) {
-                    throw new Error('city parameter is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
+                if (!locality) {
+                    throw new Error('locality parameter is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
                 }
 
-                const response = await fetch(`${API_URL}/api/${city}/schema`, {
+                const response = await fetch(`${API_URL}/api/${locality}/schema`, {
                     headers: {
                         'Authorization': `Bearer ${API_KEY}`,
                     },
@@ -674,8 +674,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
 
             case 'list_datasets': {
-                const { city } = args;
-                const url = city ? `${API_URL}/datasets?city=${encodeURIComponent(city)}` : `${API_URL}/datasets`;
+                const { locality } = args;
+                const url = locality ? `${API_URL}/datasets?locality=${encodeURIComponent(locality)}` : `${API_URL}/datasets`;
 
                 const response = await fetch(url, {
                     headers: {
