@@ -21,7 +21,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          # No registry-url for Trusted Publishing - uses OIDC instead
+      
+      - name: Ensure npm 11.5.1+ for Trusted Publishing
+        run: npm install -g npm@latest
       
       - name: Get version from tag
         id: get_version
@@ -50,10 +53,8 @@ jobs:
         run: npm test || echo "No tests defined, skipping..."
         continue-on-error: true
       
-      - name: Publish to NPM
-        run: npm publish --access public --provenance || echo "Package version may already exist, continuing..."
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to NPM (Trusted Publishing via OIDC)
+        run: npm publish --access public --provenance
       
       - name: Install MCP Publisher CLI
         run: |
