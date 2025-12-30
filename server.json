@@ -1,5 +1,5 @@
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.team-earth/datagraph",
   "title": "DataGraph",
   "description": "Urban intelligence knowledge graph. Structured locality data for civic problem-solving.",
