@@ -13,18 +13,35 @@
 
 ---
 
-## ✅ Last Successful Publish: v1.2.3 (Nov 30, 2025)
+## ✅ Last Successful Publish: v1.2.4 (Dec 30, 2025)
 
 **What worked:**
 1. Edit in monorepo: `/datagraph.city/mcp-server/`
 2. Commit to `kevinkells/datagraph.city`
 3. Push: `git push origin main`
-4. Sync: `git subtree push --prefix=mcp-server mcp-public main`
+4. Sync: `./scripts/sync-mcp-to-public.sh` (uses git subtree)
 5. Pull in public repo: `cd datagraph-city-mcp-server && git pull`
-6. Tag: `git tag v1.2.1` (format: `v*` NOT `mcp-v*`)
-7. Push tag: `git push origin v1.2.1`
+6. Tag: `git tag v1.2.4` (format: `v*` NOT `mcp-v*`)
+7. Push tag: `git push origin v1.2.4`
 8. Monitor: https://github.com/team-earth/datagraph-city-mcp-server/actions
-9. ✅ Published to NPM and MCP Registry successfully
+9. ✅ Published to NPM and MCP Registry successfully via **NPM Trusted Publishing (OIDC)**
+
+**Major changes in v1.2.4 publish:**
+- ✅ Migrated from static NPM_TOKEN to **NPM Trusted Publishing (OIDC)**
+- ✅ Updated server.json schema from 2025-10-17 (deprecated) to 2025-12-11
+- ✅ Cleaned up public README (removed LLM instructions, added gosr.ai link)
+- ✅ No more token secrets needed - OIDC handles everything
+
+**Key learnings:**
+- NPM revoked all Classic tokens (security update) - must use Granular or Trusted Publishing
+- **Trusted Publishing is better** than Granular tokens with bypass 2FA
+- Trusted Publishing requirements:
+  - npm version 11.5.1+ in workflow
+  - No `registry-url` in setup-node step
+  - No `NPM_TOKEN` secret in GitHub
+  - Configure at: https://www.npmjs.com/package/datagraph-city-mcp-server/access
+  - Settings: Organization `team-earth`, Repository `datagraph-city-mcp-server`, Workflow `publish-mcp.yml`
+- MCP Registry validates NPM package exists before accepting it (NPM publish must succeed first)
 
 ---
 
@@ -58,9 +75,11 @@ This guide explains how to publish the DataGraph MCP server to NPM and the MCP R
    git remote add mcp-public git@github.com:team-earth/datagraph-city-mcp-server.git
    ```
 
-2. **NPM Token** - `NPM_TOKEN` secret configured in team-earth repo
-   - Token created at: https://www.npmjs.com/settings/kevinkells/tokens
-   - Added to: https://github.com/team-earth/datagraph-city-mcp-server/settings/secrets/actions
+2. **NPM Trusted Publishing** - OIDC authentication configured (no tokens needed!)
+   - Configured at: https://www.npmjs.com/package/datagraph-city-mcp-server/access
+   - Settings: Organization `team-earth`, Repository `datagraph-city-mcp-server`, Workflow `publish-mcp.yml`
+   - ⚠️ **No NPM_TOKEN secret needed** - uses OIDC/Trusted Publishing instead
+   - More secure: No token rotation, no bypass 2FA, cryptographic proof of authenticity
 
 3. **GitHub Org Membership** - Public member of team-earth org
    - Required for MCP Registry OIDC authentication
