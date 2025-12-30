@@ -50,10 +50,8 @@ jobs:
         run: npm test || echo "No tests defined, skipping..."
         continue-on-error: true
       
-      - name: Publish to NPM
-        run: npm publish --access public --provenance || echo "Package version may already exist, continuing..."
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish to NPM (Trusted Publishing via OIDC)
+        run: npm publish --access public --provenance
       
       - name: Install MCP Publisher CLI
         run: |
