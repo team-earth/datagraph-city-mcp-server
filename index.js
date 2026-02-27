@@ -52,7 +52,7 @@ if (!API_KEY) {
 const server = new Server(
     {
         name: 'datagraph',
-        version: '1.3.0',
+        version: '1.3.1',
     },
     {
         capabilities: {
@@ -77,13 +77,13 @@ const TOOLS = [
         name: 'get_locality_schema',
         description: `Get the Neo4j graph schema for a locality. **ALWAYS CALL THIS FIRST** before querying.
         
-Returns: node labels, relationships, properties, indexes, sample Cypher queries, and security constraints.
+Returns: node labels, relationships, properties, indexes, dataset_filtering (with dataset IDs for WHERE clauses), and security constraints.
 
 **RECOMMENDED WORKFLOW:**
-1. Call list_datasets to discover available localities and datasets
-2. Call get_locality_schema with the locality code
-3. Generate Cypher query based on schema
-4. Use query_locality_data with cypher_query parameter
+1. Call list_datasets to discover available localities and dataset IDs
+2. Call get_locality_schema with the locality code (the 'locality' field from list_datasets, NOT the 'id' field)
+3. Read the dataset_filtering section — it tells you the exact WHERE clause to use
+4. Generate Cypher with dataset filter, then use query_locality_data with cypher_query parameter
 
 Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated Cypher from schema is more reliable, expressive, and handles complex queries better.`,
         inputSchema: {
@@ -91,7 +91,7 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
             properties: {
                 locality: {
                     type: 'string',
-                    description: 'Locality code (REQUIRED). Call list_datasets to discover available codes.',
+                    description: "Locality code (REQUIRED). Use the 'locality' field from list_datasets (NOT the 'id' field). Example: 'nova-scotia', 'kc', 'unlonely-nyc'.",
                 },
             },
             required: ['locality'],
@@ -105,10 +105,15 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
 1. **Cypher (RECOMMENDED)**: Generate Cypher after calling get_locality_schema. More reliable and expressive.
 2. **Natural Language**: Fallback for simple queries.
 
+**CRITICAL — DATASET FILTERING:**
+All datasets share one Neo4j instance. Every Cypher query MUST include a dataset filter or it will return data from ANY dataset.
+Use: WHERE n.dataset = '<dataset_id>' (get dataset IDs from list_datasets 'id' field).
+Example: MATCH (g:Goal) WHERE g.dataset = 'nova-scotia-gosr' RETURN g
+
 **Workflow:**
-1. Call list_datasets to discover localities
-2. Call get_locality_schema to understand the graph
-3. Generate Cypher based on user question and schema
+1. Call list_datasets to discover localities (use 'locality' field) and dataset IDs (use 'id' field)
+2. Call get_locality_schema with the locality code to understand the graph
+3. Generate Cypher based on user question and schema — ALWAYS include WHERE n.dataset = '<id>' filter
 4. Submit via cypher_query parameter`,
         inputSchema: {
             type: 'object',
@@ -119,11 +124,11 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
                 },
                 locality: {
                     type: 'string',
-                    description: 'Locality code (REQUIRED). Call list_datasets to discover available codes.',
+                    description: "Locality code (REQUIRED). Use the 'locality' field from list_datasets (NOT the 'id' field). Example: 'nova-scotia', 'kc', 'unlonely-nyc'.",
                 },
                 cypher_query: {
                     type: 'string',
-                    description: 'RECOMMENDED: Cypher query generated from schema. Must be read-only, include LIMIT clause (max 1000). Validated for security before execution.',
+                    description: "RECOMMENDED: Cypher query generated from schema. MUST include WHERE n.dataset = '<dataset_id>' filter (use 'id' from list_datasets). Must be read-only with LIMIT clause (max 1000).",
                 },
                 cypher_params: {
                     type: 'object',
@@ -600,11 +605,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 
                 const datasets = await response.json();
 
+                const wrapper = {
+                    usage: {
+                        locality_field: "Use the 'locality' field as the locality parameter for get_locality_schema and query_locality_data.",
+                        id_field: "Use the 'id' field in Cypher WHERE clauses to filter by dataset: WHERE n.dataset = '<id>'",
+                        critical: "All datasets share one Neo4j instance. Cypher queries WITHOUT a dataset filter will return data from ANY dataset.",
+                    },
+                    datasets,
+                };
+
                 return {
                     content: [
                         {
                             type: 'text',
-                            text: JSON.stringify(datasets, null, 2),
+                            text: JSON.stringify(wrapper, null, 2),
                         },
                     ],
                 };

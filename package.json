@@ -1,6 +1,6 @@
 {
     "name": "datagraph-city-mcp-server",
-    "version": "1.3.0",
+    "version": "1.3.1",
     "description": "Model Context Protocol server for DataGraph API. Query NYC urban data (subway, DOB permits, property sales, crime, demographics) and civic programs (Un-Lonely NYC, KC violence prevention) using GOSR framework (Goal-Obstacles-Solutions-Resources).",
     "main": "index.js",
     "type": "module",
