@@ -15,39 +15,8 @@
  * - Resources: ACTUAL programs/initiatives currently operating (plural)
  * - Actors: Organizations running the Resources (not in GOSR acronym but critical to the model)
  * 
- * Available Datasets (by locality code):
- * 
- * Locality: 'nyc' (New York City - General Data)
- * - NYC Subway: 445 stations with locations and lines
- * - NYC DOB Permits: 4.8M building permits with locations and work types
- * - NYC PLUTO: 858K property parcels with owner, zoning, building characteristics, and address-to-BBL mappings
- * - NYC Property Sales: 53,464 real estate transactions with prices
- * - NYC Crime Data: 100,000 NYPD complaints with demographics
- * - NYC Demographics: 195 neighborhoods with population statistics
- * 
- * Locality: 'unlonely-nyc' (Un-Lonely NYC - GOSR Loneliness Programs)
- * - Dataset: unlonely-nyc
- * - 7,514 Resources (actual programs) addressing urban loneliness
- * - GOSR Framework: 1 Goal, multiple Obstacles, Solutions, Resources, and Actors
- * 
- * Locality: 'kc' (Kansas City - GOSR Violence Prevention)
- * - Dataset: kansas-city-violence-prevention
- * - 149 Resources (violence prevention programs) run by 81 Actors
- * - GOSR Framework: Goals, Obstacles, Solutions, Resources, and Actors
- * 
- * Locality: 'rust-belt' (Western Pennsylvania - GOSR Civic Infrastructure)
- * - Dataset: rust-belt-initiatives
- * - 5,368 Resources (civic programs) addressing community infrastructure
- * - GOSR Framework: 8 Goals covering gathering spaces, economic development, etc.
- * 
- * Example Queries:
- * - "Find programs addressing social isolation in NYC"
- * - "Show recent building permits in Manhattan"
- * - "What is the BBL for 552 W 43rd Street?"
- * - "Show property characteristics for a given address"
- * - "What are property sale prices by borough?"
- * - "Show crime statistics for Brooklyn"
- * - "Which neighborhoods have the highest population?"
+ * Localities are discovered dynamically via the list_datasets tool.
+ * Always call list_datasets first to see available locality codes and datasets.
  */
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
@@ -83,7 +52,7 @@ if (!API_KEY) {
 const server = new Server(
     {
         name: 'datagraph',
-        version: '1.2.5',
+        version: '1.3.0',
     },
     {
         capabilities: {
@@ -110,28 +79,11 @@ const TOOLS = [
         
 Returns: node labels, relationships, properties, indexes, sample Cypher queries, and security constraints.
 
-Available NYC datasets: Subway stations, GOSR programs, DOB building permits, PLUTO property data, property sales, crime data, and demographics.
-
 **RECOMMENDED WORKFLOW:**
-1. Call get_city_schema to understand the graph structure
-2. Generate Cypher query based on schema
-3. Use query_city_data with cypher_query parameter
-
-**ADDRESS LOOKUP PATTERN (CRITICAL):**
-When querying by address, ALWAYS use PLUTO as the lookup table:
-
-1. PLUTO stores addresses in format: "123 STREET NAME" (all caps, no street type suffix)
-2. Use CONTAINS for flexible matching: WHERE p.address CONTAINS '552' AND p.address CONTAINS 'WEST 43'
-3. PLUTO returns BBL (Borough-Block-Lot identifier)
-4. Use BBL to join with DOBPermit, PropertySale, or other datasets
-
-Example query:
-MATCH (pluto:PLUTOParcel) WHERE pluto.address CONTAINS '552' AND pluto.address CONTAINS 'WEST 43' 
-WITH pluto.bbl as bbl
-MATCH (permit:DOBPermit) WHERE permit.bbl = bbl
-RETURN permit
-
-Why? PLUTO has 100% address coverage (858K parcels). Other datasets use BBL for joins.
+1. Call list_datasets to discover available localities and datasets
+2. Call get_locality_schema with the locality code
+3. Generate Cypher query based on schema
+4. Use query_locality_data with cypher_query parameter
 
 Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated Cypher from schema is more reliable, expressive, and handles complex queries better.`,
         inputSchema: {
@@ -139,10 +91,10 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
             properties: {
                 locality: {
                     type: 'string',
-                    description: 'Locality code (REQUIRED): "nyc" (NYC general), "kc" (Kansas City), "rust-belt" (Western PA), "unlonely-nyc" (NYC loneliness programs)',
-                    enum: ['nyc', 'kc', 'rust-belt', 'unlonely-nyc'],
+                    description: 'Locality code (REQUIRED). Call list_datasets to discover available codes.',
                 },
             },
+            required: ['locality'],
         },
     },
     {
@@ -150,43 +102,14 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
         description: `Execute queries against locality data. **BEST PRACTICE: Generate Cypher from schema rather than using natural language.**
 
 **Two modes:**
-1. **Cypher (RECOMMENDED)**: Generate Cypher after calling get_city_schema. More reliable and expressive.
-2. **Natural Language**: Supports GOSR programs, subway stations, DOB permits, property sales, crime data, demographics.
-
-**Natural Language Examples:**
-- "Show building permits in Manhattan"
-- "What are recent property sales?"
-- "Show crime statistics by borough"
-- "Which neighborhoods are most populous?"
-- "Find programs addressing social isolation"
-
-**ADDRESS QUERIES - CRITICAL PATTERN:**
-For any address-based queries ("permits at 123 Main St"), use PLUTO first:
-
-Address Format in PLUTO: "NUMBER STREET NAME" (uppercase, e.g., "552 WEST 43 STREET")
-- Use CONTAINS for flexible matching: WHERE p.address CONTAINS '552' AND p.address CONTAINS 'WEST 43'
-- Include borough filter when known: AND p.borough = 'MN' (Manhattan)
-- PLUTO returns BBL (10-digit Borough-Block-Lot ID)
-- Join to other datasets via BBL
-
-Example:
-MATCH (p:PLUTOParcel) WHERE p.address CONTAINS 'street number' AND p.address CONTAINS 'street name'
-WITH p.bbl as bbl, p.address as address
-MATCH (permit:DOBPermit) WHERE permit.bbl = bbl
-RETURN address, bbl, collect(permit)[0..10]
-
-Why? Only 18% of DOB permits have addresses; PLUTO provides universal address→BBL mapping.
-
-**Why Cypher-first?**
-- Natural language parser is limited to predefined patterns
-- Cypher handles complex queries (multiple filters, aggregations, etc.)
-- LLMs are excellent at generating Cypher from schema
-- Security validation ensures read-only operations
+1. **Cypher (RECOMMENDED)**: Generate Cypher after calling get_locality_schema. More reliable and expressive.
+2. **Natural Language**: Fallback for simple queries.
 
 **Workflow:**
-1. Call get_city_schema
-2. Generate Cypher based on user question and schema
-3. Submit via cypher_query parameter`,
+1. Call list_datasets to discover localities
+2. Call get_locality_schema to understand the graph
+3. Generate Cypher based on user question and schema
+4. Submit via cypher_query parameter`,
         inputSchema: {
             type: 'object',
             properties: {
@@ -196,8 +119,7 @@ Why? Only 18% of DOB permits have addresses; PLUTO provides universal address→
                 },
                 locality: {
                     type: 'string',
-                    description: 'Locality code (REQUIRED): "nyc" (NYC general), "kc" (Kansas City), "rust-belt" (Western PA), "unlonely-nyc" (NYC loneliness programs)',
-                    enum: ['nyc', 'kc', 'rust-belt', 'unlonely-nyc'],
+                    description: 'Locality code (REQUIRED). Call list_datasets to discover available codes.',
                 },
                 cypher_query: {
                     type: 'string',
@@ -218,29 +140,18 @@ Why? Only 18% of DOB permits have addresses; PLUTO provides universal address→
     },
     {
         name: 'list_datasets',
-        description: `List all available datasets with their node counts and metadata.
+        description: `List all available datasets with their locality codes, node counts, and metadata.
 
-**Available Datasets:**
+**CALL THIS FIRST** to discover available localities and datasets before querying.
 
-**NYC Property Data:**
-- **PLUTO**: Primary Land Use Tax Lot Output - All NYC parcels with address-to-BBL/BIN mappings, ownership, zoning (858K parcels)
-- **DOB Permits**: Building permits with work types, costs, locations (4.8M permits)
-- **Property Sales**: Real estate transactions with prices and neighborhoods (53K sales)
+Returns each dataset's locality code, name, node counts (Goals, Obstacles, Solutions, Resources, Actors, Locations), and suggested Cypher queries.
 
-**NYC Public Safety & Demographics:**
-- **Crime Data**: NYPD complaints with offense types and demographics (100K complaints)
-- **Demographics**: Neighborhood population statistics (195 NTAs)
-
-**NYC Infrastructure:**
-- **Subway**: MTA station data with lines and locations (445 stations)
-
-**GOSR - ALWAYS SPELL AS: Goal-Obstacles-Solutions-Resources**
-Framework: Goal (singular aspirational future), Obstacles (plural barriers), Solutions (plural potential strategies if implemented, NOT actual programs), Resources (plural actual programs currently operating), Actors (organizations running Resources, in model but not in acronym)
-
-- **NYC Un-Lonely**: 7,514 Resources (actual programs addressing loneliness), mapped to Solutions and Obstacles
-- **Kansas City**: 149 Resources (violence prevention programs) run by 81 Actors
-
-Use this to discover civic datasets and their structure before querying.`,
+GOSR Framework — ALWAYS SPELL AS: Goal-Obstacles-Solutions-Resources
+- Goal (singular aspirational future)
+- Obstacles (plural barriers)
+- Solutions (plural potential strategies if implemented, NOT actual programs)
+- Resources (plural actual programs currently operating)
+- Actors (organizations running Resources, in model but not in GOSR acronym)`,
         inputSchema: {
             type: 'object',
             properties: {
@@ -259,18 +170,6 @@ Use this to discover civic datasets and their structure before querying.`,
             properties: {},
         },
     },
-    {
-        name: 'list_datasets',
-        description: `List all available datasets with their exact names and locality codes.
-
-**CALL THIS FIRST** when you need dataset names. Returns the locality→dataset mapping.
-
-Example: If user asks about "rust-belt", this shows the exact dataset name is "rust-belt-initiatives".`,
-        inputSchema: {
-            type: 'object',
-            properties: {},
-        },
-    },
 ];
 
 // Define available prompts
@@ -281,7 +180,7 @@ const PROMPTS = [
         arguments: [
             {
                 name: 'locality',
-                description: 'Locality code: "nyc", "kc", "rust-belt", "unlonely-nyc"',
+                description: 'Locality code. Call list_datasets to discover available codes.',
                 required: true,
             },
         ],
@@ -308,7 +207,7 @@ const PROMPTS = [
         arguments: [
             {
                 name: 'locality',
-                description: 'Locality code: "nyc", "kc", "rust-belt", "unlonely-nyc"',
+                description: 'Locality code. Call list_datasets to discover available codes.',
                 required: true,
             },
             {
@@ -375,9 +274,9 @@ server.setRequestHandler(GetPromptRequestSchema, async (request) => {
     switch (name) {
         case 'explore_locality_data': {
             const locality = args?.locality;
-            if (!locality) {
-                throw new Error('locality argument is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
-            }
+                if (!locality) {
+                    throw new Error('locality argument is required. Call list_datasets to discover available locality codes.');
+                }
             return {
                 messages: [
                     {
@@ -430,8 +329,8 @@ Use the GOSR framework (gosr.ai) to structure the analysis.`,
             const user_question = args?.user_question;
             
             if (!locality) {
-                throw new Error('locality argument is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
-            }
+                    throw new Error('locality argument is required. Call list_datasets to discover available locality codes.');
+                }
             if (!user_question) {
                 throw new Error('user_question argument is required');
             }
@@ -616,7 +515,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 const { query, locality, category, limit = 10, cypher_query, cypher_params } = args;
                 
                 if (!locality) {
-                    throw new Error('locality parameter is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
+                    throw new Error('locality parameter is required. Call list_datasets to discover available locality codes.');
                 }
 
                 const requestBody = { query, category, limit };
@@ -659,7 +558,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                 const { locality } = args;
                 
                 if (!locality) {
-                    throw new Error('locality parameter is required. Choose from: nyc, kc, rust-belt, unlonely-nyc');
+                    throw new Error('locality parameter is required. Call list_datasets to discover available locality codes.');
                 }
 
                 const response = await fetch(`${API_URL}/api/${locality}/schema`, {
