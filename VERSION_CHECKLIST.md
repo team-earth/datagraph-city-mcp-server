@@ -28,7 +28,7 @@ Current version to bump from: `_______` → New version: `_______`
 Run this command and confirm all three show the SAME version:
 
 ```bash
-cd /home/kkells/datagraph.city/mcp-server
+cd /home/kkells/gosr/datagraph.city/mcp-server
 echo "package.json: $(grep -m1 '"version"' package.json | cut -d'"' -f4)"
 echo "index.js:     $(grep -m1 "version: '" index.js | cut -d"'" -f2)"
 echo "server.json:  $(grep -m1 '"version"' server.json | cut -d'"' -f4)"
@@ -39,7 +39,7 @@ echo "server.json:  $(grep -m1 '"version"' server.json | cut -d'"' -f4)"
 ## Step 3: Commit to Main Repo
 
 ```bash
-cd /home/kkells/datagraph.city
+cd /home/kkells/gosr/datagraph.city
 git add mcp-server/
 git commit -m "feat: Bump MCP server to vX.Y.Z
 
@@ -57,7 +57,7 @@ git push origin main
 ## Step 4: Sync to Public Repo
 
 ```bash
-cd /home/kkells/datagraph.city
+cd /home/kkells/gosr/datagraph.city
 ./scripts/sync-mcp-to-public.sh
 # Type 'y' when prompted
 ```
@@ -67,7 +67,7 @@ cd /home/kkells/datagraph.city
 ## Step 5: Tag and Push
 
 ```bash
-cd /home/kkells/datagraph-city-mcp-server
+cd /home/kkells/gosr/datagraph.city-mcp-server
 git pull
 git tag vX.Y.Z
 git push origin vX.Y.Z
@@ -101,7 +101,7 @@ Watch for both:
 3. Sync to public repo
 4. Delete and recreate the tag:
    ```bash
-   cd /home/kkells/datagraph-city-mcp-server
+   cd /home/kkells/gosr/datagraph.city-mcp-server
    git pull
    git tag -d vX.Y.Z
    git push origin :refs/tags/vX.Y.Z

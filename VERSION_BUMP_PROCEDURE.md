@@ -49,7 +49,7 @@ Result:
 ### 1. Update All Three Files
 
 ```bash
-cd /home/kkells/datagraph.city/mcp-server
+cd /home/kkells/gosr/datagraph.city/mcp-server
 
 # Update package.json
 # Change: "version": "1.2.3" → "1.2.4"
@@ -65,7 +65,7 @@ cd /home/kkells/datagraph.city/mcp-server
 ### 2. Commit to Main Repo
 
 ```bash
-cd /home/kkells/datagraph.city
+cd /home/kkells/gosr/datagraph.city
 git add mcp-server/
 git commit -m "feat: Bump MCP server to v1.2.4
 
@@ -78,7 +78,7 @@ git push origin main
 ### 3. Sync to Public Repo
 
 ```bash
-cd /home/kkells/datagraph.city
+cd /home/kkells/gosr/datagraph.city
 ./scripts/sync-mcp-to-public.sh
 # Type 'y' when prompted
 ```
@@ -86,7 +86,7 @@ cd /home/kkells/datagraph.city
 ### 4. Tag and Push
 
 ```bash
-cd /home/kkells/datagraph-city-mcp-server
+cd /home/kkells/gosr/datagraph.city-mcp-server
 git pull
 git tag v1.2.4
 git push origin v1.2.4
@@ -106,7 +106,7 @@ Both should succeed:
 Before pushing a version tag, verify:
 
 ```bash
-cd /home/kkells/datagraph-city-mcp-server
+cd /home/kkells/gosr/datagraph.city-mcp-server
 
 # All three should show the SAME version:
 grep '"version"' package.json        # Should show X.Y.Z
@@ -119,7 +119,7 @@ If any mismatch, DO NOT push the tag. Fix the files first.
 ## Quick Version Check Command
 
 ```bash
-cd /home/kkells/datagraph.city/mcp-server
+cd /home/kkells/gosr/datagraph.city/mcp-server
 echo "package.json: $(grep -m1 '"version"' package.json | cut -d'"' -f4)"
 echo "index.js:     $(grep -m1 "version: '" index.js | cut -d"'" -f2)"
 echo "server.json:  $(grep -m1 '"version"' server.json | cut -d'"' -f4)"
