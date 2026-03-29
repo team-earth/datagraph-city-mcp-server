@@ -9,7 +9,7 @@
 - Windows 10/11 with WSL2 (Ubuntu)
 - Node.js installed on Windows
 - Claude Desktop installed on Windows
-- DataGraph MCP server code in WSL at `/home/kkells/gosr/datagraph.city/mcp-server/`
+- DataGraph MCP server code in WSL at `/home/kkells/datagraph.city/mcp-server/`
 
 ---
 
@@ -40,7 +40,7 @@ C:\Users\<YourUsername>\AppData\Roaming\Claude\claude_desktop_config.json
       "args": [
         "-d",
         "Ubuntu",
-        "/home/kkells/gosr/datagraph.city/mcp-server/index.js"
+        "/home/kkells/datagraph.city/mcp-server/index.js"
       ],
       "env": {
         "DATAGRAPH_API_KEY": "dgc_Og_CVPG3qL0JFDvuru1zNUWfYLZBPGPmfIVAXMZRrEo",
