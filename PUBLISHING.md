@@ -172,7 +172,7 @@ git tag mcp-v2.0.0  # Breaking change
 Before publishing, you can validate your `server.json`:
 
 ```bash
-cd /root/datagraph.city/mcp-server
+cd /home/kkells/gosr/datagraph.city/mcp-server
 .venv/bin/python validate_server_json.py server.json
 ```
 
@@ -244,14 +244,14 @@ curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/downlo
 ### Publish to NPM
 
 ```bash
-cd /root/datagraph.city/mcp-server
+cd /home/kkells/gosr/datagraph.city/mcp-server
 npm publish
 ```
 
 ### Publish to MCP Registry
 
 ```bash
-cd /root/datagraph.city/mcp-server
+cd /home/kkells/gosr/datagraph.city/mcp-server
 
 # Login with GitHub
 mcp-publisher login github
