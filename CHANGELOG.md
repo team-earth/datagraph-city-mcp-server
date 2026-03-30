@@ -2,6 +2,14 @@
 
 All notable changes to the DataGraph MCP Server will be documented in this file.
 
+## [1.3.2] - 2026-03-30
+
+### Changed
+- **GOSR framework documentation**: Added Funder, StrategyArea, and Ecosystem layer descriptions to file header, `list_datasets` tool description, and `get_server_info` response
+  - Funder: foundations/agencies that FUND Actors
+  - StrategyArea: practitioner groupings (WORKS_IN) — distinct from Solutions
+  - Ecosystem: governance stakeholders (SETS_POLICY, FUNDS, WORKS_IN)
+
 ## [1.2.0] - 2025-11-19
 
 ### Added
