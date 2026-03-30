@@ -9,11 +9,19 @@
  * GOSR Framework - ALWAYS SPELL AS: Goal-Obstacles-Solutions-Resources
  * (Note: Goal is singular, Obstacles/Solutions/Resources are PLURAL)
  * 
+ * Core layers:
  * - Goal: A single aspirational future picture (singular)
  * - Obstacles: Barriers preventing the goal (plural - what stands in the way)
  * - Solutions: POTENTIAL strategies to overcome obstacles if implemented (plural - not actual programs)
  * - Resources: ACTUAL programs/initiatives currently operating (plural)
  * - Actors: Organizations running the Resources (not in GOSR acronym but critical to the model)
+ * - Funders: Foundations or government agencies that FUND Actors (F-layer)
+ *
+ * Extended layers (present in some datasets):
+ * - StrategyArea: Broad practitioner-defined operational groupings (e.g. Prevention, Intervention).
+ *   NOT the same as Solutions. Relationship: (Actor)-[:WORKS_IN]->(StrategyArea)
+ * - Ecosystem: Governance stakeholders (elected officials, planning bodies) that set policy and
+ *   allocate public funds but don't run programs. Relationships: SETS_POLICY, FUNDS, WORKS_IN
  * 
  * Localities are discovered dynamically via the list_datasets tool.
  * Always call list_datasets first to see available locality codes and datasets.
@@ -52,7 +60,7 @@ if (!API_KEY) {
 const server = new Server(
     {
         name: 'datagraph',
-        version: '1.3.1',
+        version: '1.3.2',
     },
     {
         capabilities: {
@@ -149,14 +157,19 @@ Example: MATCH (g:Goal) WHERE g.dataset = 'nova-scotia-gosr' RETURN g
 
 **CALL THIS FIRST** to discover available localities and datasets before querying.
 
-Returns each dataset's locality code, name, node counts (Goals, Obstacles, Solutions, Resources, Actors, Locations), and suggested Cypher queries.
+Returns each dataset's locality code, name, node counts, and suggested Cypher queries.
 
 GOSR Framework — ALWAYS SPELL AS: Goal-Obstacles-Solutions-Resources
-- Goal (singular aspirational future)
-- Obstacles (plural barriers)
-- Solutions (plural potential strategies if implemented, NOT actual programs)
-- Resources (plural actual programs currently operating)
-- Actors (organizations running Resources, in model but not in GOSR acronym)`,
+Core layers: Goal · Obstacles · Solutions · Resources · Actors · Funders
+Extended layers (some datasets): StrategyArea (Actor WORKS_IN) · Ecosystem (SETS_POLICY, FUNDS)
+- Goal: singular aspirational future state
+- Obstacles: plural barriers preventing the goal (the problems)
+- Solutions: plural potential strategies to overcome Obstacles (NOT actual programs)
+- Resources: plural actual operating programs (IMPLEMENT Solutions)
+- Actors: organizations that EXECUTE Resources and receive FUNDS from Funders
+- Funders: foundations/agencies that FUND Actors
+- StrategyArea: practitioner-defined groupings (e.g. Prevention, Intervention) — NOT Solutions
+- Ecosystem: governance bodies (councils, elected officials) that SETS_POLICY and FUNDS`,
         inputSchema: {
             type: 'object',
             properties: {
@@ -505,10 +518,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                                 gosr_framework: {
                                     spelling: "ALWAYS: Goal-Obstacles-Solutions-Resources (Goal singular, rest plural)",
                                     goal: "A single aspirational future picture (singular)",
-                                    obstacles: "Barriers preventing the goal (plural)",
-                                    solutions: "POTENTIAL strategies to overcome obstacles if implemented (plural - NOT actual programs)",
-                                    resources: "ACTUAL programs/initiatives currently operating (plural)",
-                                    actors: "Organizations running the Resources (in model but not in GOSR acronym)"
+                                    obstacles: "Barriers preventing the goal — a diagnosis of why the problem persists (plural)",
+                                    solutions: "POTENTIAL strategies to overcome each Obstacle if implemented (plural - NOT actual programs)",
+                                    resources: "ACTUAL operating programs that implement a Solution in practice (plural)",
+                                    actors: "Organizations that EXECUTE Resources (in model but not in GOSR acronym)",
+                                    funders: "Foundations or government agencies that FUND Actors. Direction: (Funder)-[:FUNDS]->(Actor)",
+                                    strategy_area: "Extended layer (some datasets). Broad practitioner groupings e.g. Prevention, Intervention. NOT Solutions. Relationship: (Actor)-[:WORKS_IN]->(StrategyArea)",
+                                    ecosystem: "Extended layer (some datasets). Governance stakeholders (elected officials, planning bodies) that set policy and allocate public funds. Relationships: SETS_POLICY, FUNDS, WORKS_IN"
                                 }
                             }, null, 2),
                         },
