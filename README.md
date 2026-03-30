@@ -1,96 +1,17 @@
 # DataGraph MCP Server
 
-Model Context Protocol server for accessing DataGraph API from Claude Desktop, ChatGPT, and other MCP-compatible clients.
-
-## GOSR Framework
-
-**Goal-Obstacles-Solutions-Resources (GOSR)** is a participatory problem structuring method for civic problem-solving. Learn more at [gosr.ai](https://gosr.ai).
-
-The framework consists of:
-
-- **Goal** (singular): The aspirational future picture for a community
-- **Obstacles** (plural): Barriers preventing that future from being realized
-- **Solutions** (plural): Potential strategies to overcome obstacles IF implemented (these are NOT actual programs)
-- **Resources** (plural): Actual programs and initiatives currently operating in the community
-- **Actors**: Organizations that run the Resources (in the data model but not explicitly in the GOSR acronym)
-
-**Critical Distinctions:**
-- Solutions are theoretical/potential interventions
-- Resources are real, existing programs
-- Actors are the organizations executing Resources
-
-**Data Structure:**
-- Obstacles can have solutions (leaf nodes) OR child obstacles (parent nodes), but not both
-- Both Goal→Obstacle and Obstacle→Obstacle use the `HAS_OBSTACLE` relationship type
-- Count parent obstacles: `MATCH (parent:Obstacle)-[:HAS_OBSTACLE]->(child:Obstacle) WHERE parent.dataset = 'your-dataset' RETURN COUNT(DISTINCT parent)`
-- Count child obstacles: `MATCH (parent:Obstacle)-[:HAS_OBSTACLE]->(child:Obstacle) WHERE parent.dataset = 'your-dataset' RETURN COUNT(child)`
+Model Context Protocol server for accessing the DataGraph API from Claude Desktop, ChatGPT, and other MCP-compatible clients.
 
 ## Installation
 
-### 1. Install Dependencies
-
-```bash
-cd mcp-server
-npm install
-```
-
-### 2. Configure API Key
-
-Create `.env` file:
-```bash
-cp .env.example .env
-# Edit .env and add your API key
-```
-
-Or set environment variable:
-```bash
-export DATAGRAPH_API_KEY="dgc_your_key_here"
-```
-
-### 3. Test Locally
-
-```bash
-npm start
-```
-
-## Using with Claude Desktop
-
-### Configure Claude Desktop
-
-Edit your Claude Desktop config file:
-
-**macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
-**Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
-
-Add this configuration:
-
-```json
-{
-  "mcpServers": {
-    "datagraph": {
-      "command": "node",
-      "args": [
-        "/absolute/path/to/mcp-server/index.js"
-      ],
-      "env": {
-        "DATAGRAPH_API_KEY": "dgc_your_api_key_here"
-      }
-    }
-  }
-}
-```
-
-**Or use npx (easier):**
+### Via npx (recommended)
 
 ```json
 {
   "mcpServers": {
     "datagraph": {
       "command": "npx",
-      "args": [
-        "-y",
-        "datagraph-mcp-server"
-      ],
+      "args": ["-y", "datagraph-city-mcp-server"],
       "env": {
         "DATAGRAPH_API_KEY": "dgc_your_api_key_here"
       }
@@ -99,102 +20,144 @@ Add this configuration:
 }
 ```
 
-### Restart Claude Desktop
+### Via local install
 
-Restart Claude Desktop for changes to take effect.
-
-## Example Usage in Claude
-
-Once configured, you can ask Claude:
-
-```
-"Using DataGraph, show me recent building permits in Manhattan"
-
-"What are property sale prices by borough in NYC?"
-
-"Show crime statistics for Brooklyn"
-
-"Which NYC neighborhoods have the highest population?"
-
-"Find programs addressing social isolation in NYC"
-
-"What cities are available in DataGraph?"
+```bash
+npm install datagraph-city-mcp-server
 ```
 
-Claude will automatically use the DataGraph MCP server to query the data.
-
-## Available Datasets
-
-**IMPORTANT: Use `list_datasets` tool to get exact dataset names!**
-
-### Locality→Dataset Mapping
-
-| Locality Code | Dataset Name | Description |
-|---------------|--------------|-------------|
-| `nyc` | (multiple datasets) | NYC subway, permits, property data, crime, demographics |
-| `unlonely-nyc` | `unlonely-nyc` | 7,514 programs addressing urban loneliness (GOSR) |
-| `kc` | `kansas-city-violence-prevention` | 149 violence prevention programs (GOSR) |
-| `rust-belt` | `rust-belt-initiatives` | 5,368 civic infrastructure programs (GOSR) |
-
-### Dataset Details
-
-**New York City (nyc):**
-- **Subway**: 445 MTA stations with lines and locations
-- **DOB Permits**: 856,480 building permits from DOB NOW (March 2021-present)
-  - Source: NYC Open Data `rbx6-tga4` - DOB NOW: Build - Approved Permits
-  - Includes work types, costs, dates, applicants, owners, building details
-- **Property Sales**: 53,464 real estate transactions with prices
-- **Crime Data**: 100,000 NYPD complaints with demographics
-- **Demographics**: 195 neighborhoods with population statistics
-
-**Un-Lonely NYC (unlonely-nyc):**
-- **Dataset**: `unlonely-nyc`
-- **GOSR**: 7,514 programs addressing urban loneliness
-
-**Kansas City (kc):**
-- **Dataset**: `kansas-city-violence-prevention`
-- **GOSR**: 149 violence prevention and community resources
-
-**Rust Belt (rust-belt):**
-- **Dataset**: `rust-belt-initiatives`
-- **GOSR**: 5,368 civic infrastructure programs
-
-## Available Tools
-
-### `list_datasets`
-
-**CALL THIS FIRST** to get exact dataset names and locality codes.
-
-Returns the locality→dataset mapping so you know the exact dataset name to use in queries.
-
-Example: User asks about "rust-belt" → tool shows dataset name is "rust-belt-initiatives"
-
-### `query_city_data`
-
-Query urban data using natural language.
-
-**Parameters:**
-- `query` (required): Natural language query
-- `locality` (optional): Locality code (default: "nyc")
-- `category` (optional): Filter by category
-- `limit` (optional): Max results (default: 10)
-
-**Example:**
 ```json
 {
-  "query": "Properties under $800K in Brooklyn",
-  "locality": "nyc",
-  "limit": 5
+  "mcpServers": {
+    "datagraph": {
+      "command": "node",
+      "args": ["/absolute/path/to/node_modules/datagraph-city-mcp-server/index.js"],
+      "env": {
+        "DATAGRAPH_API_KEY": "dgc_your_api_key_here"
+      }
+    }
+  }
 }
 ```
 
-### `list_cities`
+### Get an API key
 
-List all supported cities and their datasets.
+Sign up at [datagraph.city](https://datagraph.city) to get your free API key.
 
-### `get_usage_stats`
+---
 
-Get your API usage statistics and quota.
+## Claude Desktop setup
+
+1. Open Claude Desktop config:
+   - **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+   - **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+2. Add the configuration above with your API key
+3. Restart Claude Desktop
+
+---
+
+## Example queries
+
+```
+"What programs address violence prevention in Kansas City?"
+"Show me the obstacles to reducing urban loneliness in NYC"
+"Which organizations fund violence prevention in Kansas City?"
+"What strategy areas do Kansas City nonprofits work in?"
+"Show recent building permits in Manhattan"
+"What are property sale prices by borough in NYC?"
+```
+
+---
+
+## Available datasets
+
+**Call `list_datasets` first** — it returns exact dataset names and current counts.
+
+| Locality | Dataset | Description |
+|----------|---------|-------------|
+| `kc` | `kansas-city-violence-prevention` | 450+ programs, 200+ organizations, violence prevention (GOSR) |
+| `unlonely-nyc` | `unlonely-nyc` | 7,500+ programs addressing urban loneliness (GOSR) |
+| `rust-belt` | `rust-belt-initiatives` | 5,300+ civic infrastructure programs (GOSR) |
+| `nyc` | multiple | NYC subway, building permits, property sales, crime, demographics |
+
+### NYC dataset details
+
+| Dataset | Records | Notes |
+|---------|---------|-------|
+| Subway | 445 stations | MTA lines and locations |
+| DOB Permits | 856,480 | Building permits from DOB NOW (March 2021–present) |
+| Property Sales | 53,464 | Real estate transactions with prices |
+| Crime | 100,000 | NYPD complaints with demographics |
+| Demographics | 195 neighborhoods | Population statistics |
+
+---
+
+## GOSR Framework
+
+**Goal-Obstacles-Solutions-Resources (GOSR)** is a participatory problem-structuring method for civic problem-solving. Learn more at [gosr.ai](https://gosr.ai).
+
+| Layer | Role |
+|-------|------|
+| **Goal** | The aspirational future state for a community (singular) |
+| **Obstacles** | Barriers preventing that future — a diagnosis of why the problem persists |
+| **Solutions** | Potential strategies to overcome each Obstacle (NOT actual programs) |
+| **Resources** | Actual operating programs that implement a Solution in practice |
+| **Actors** | Organizations that run Resources |
+| **Funders** | Foundations and government agencies that fund Actors |
+| **StrategyArea** | Practitioner-defined operational groupings (e.g. Prevention, Intervention) — present in some datasets |
+| **Ecosystem** | Governance stakeholders (elected officials, planning bodies) that set policy — present in some datasets |
+
+**Key relationship chain:**
+```
+(Goal)-[:HAS_OBSTACLE]->(Obstacle)-[:HAS_SOLUTION]->(Solution)
+    <-[:IMPLEMENTS]-(Resource)<-[:EXECUTES]-(Actor)<-[:FUNDS]-(Funder)
+(Actor)-[:WORKS_IN]->(StrategyArea)
+```
+
+**Critical distinctions:**
+- Solutions are theoretical/potential interventions — they describe *what could work*
+- Resources are real, existing programs currently operating
+- Obstacles can have child Solutions (leaf nodes) OR child Obstacles (sub-problems), but not both
+
+**Counting parent vs. leaf Obstacles:**
+```cypher
+// Parent obstacles (have sub-obstacles)
+MATCH (p:Obstacle)-[:HAS_OBSTACLE]->(c:Obstacle)
+WHERE p.dataset = 'your-dataset'
+RETURN COUNT(DISTINCT p)
+
+// Leaf obstacles (have solutions)
+MATCH (p:Obstacle)-[:HAS_OBSTACLE]->(c:Obstacle)
+WHERE p.dataset = 'your-dataset'
+RETURN COUNT(c)
+```
+
+---
+
+## Available tools
+
+| Tool | Description |
+|------|-------------|
+| `list_datasets` | List all available datasets — **call this first** |
+| `get_locality_schema` | Get the full graph schema for a locality — call before writing Cypher |
+| `query_locality_data` | Query data using natural language or raw Cypher |
+| `explore_locality_data` | Browse available data in a locality |
+| `analyze_gosr_dataset` | Analyze a GOSR dataset for civic problem-solving |
+| `get_server_info` | Server version and framework reference |
+| `get_usage_stats` | Your API usage and quota |
+
+### `query_locality_data` parameters
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `query` | Yes | Natural language query or raw Cypher |
+| `locality` | No | Locality code, e.g. `kc`, `nyc` (default: `nyc`) |
+| `category` | No | Filter by category |
+| `limit` | No | Max results (default: 10) |
+
+**Tip:** Call `get_locality_schema` first to understand the graph structure, then write Cypher directly for precise results.
+
+---
 
 ## Development
 
@@ -204,55 +167,28 @@ Get your API usage statistics and quota.
 npx @modelcontextprotocol/inspector node index.js
 ```
 
-### Debug Mode
+### Debug mode
 
 ```bash
-DEBUG=* npm start
+DEBUG=* node index.js
 ```
 
-## Publishing to NPM (Optional)
-
-To publish as an npm package:
-
-```bash
-# 1. Update package.json with your details
-# 2. Login to npm
-npm login
-
-# 3. Publish
-npm publish
-```
-
-Then users can install with:
-```bash
-npx datagraph-mcp-server
-```
+---
 
 ## Troubleshooting
 
-### "API key not found" error
+**"API key not found"** — Ensure `DATAGRAPH_API_KEY` is set in your MCP server env config.
 
-Make sure your `.env` file exists with correct API key:
-```bash
-DATAGRAPH_API_KEY=dgc_your_key_here
-```
+**Claude doesn't see the server** — Use absolute paths. Restart Claude Desktop completely after config changes.
 
-### Claude doesn't see the server
+**Empty query results** — Use `get_locality_schema` first to understand the graph structure, then write Cypher directly via `query_locality_data`.
 
-1. Check config file path is correct
-2. Use absolute paths, not relative
-3. Restart Claude Desktop completely
-4. Check Claude Desktop logs for errors
+**"Command failed"** — Verify Node.js is installed (`node --version`), then test manually: `node index.js`.
 
-### "Command failed" error
-
-1. Make sure Node.js is installed (`node --version`)
-2. Run `npm install` in mcp-server directory
-3. Test manually: `node index.js`
+---
 
 ## Support
 
-- Documentation: https://docs.datagraph.city/mcp
-- Issues: https://github.com/yourusername/datagraph/issues
+- Documentation: [docs.datagraph.city](https://docs.datagraph.city)
+- Issues: [github.com/team-earth/datagraph-city-mcp-server/issues](https://github.com/team-earth/datagraph-city-mcp-server/issues)
 - Email: support@datagraph.city
-
