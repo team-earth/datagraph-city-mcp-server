@@ -60,7 +60,7 @@ if (!API_KEY) {
 const server = new Server(
     {
         name: 'datagraph',
-        version: '1.4.0',
+        version: '1.5.0',
     },
     {
         capabilities: {
@@ -167,7 +167,7 @@ Extended layers (some datasets): StrategyArea (Actor WORKS_IN) · Ecosystem (SET
 - Solutions: plural potential strategies to overcome Obstacles (NOT actual programs)
 - Resources: plural actual operating programs (IMPLEMENT Solutions)
 - Actors: organizations that EXECUTE Resources and receive FUNDS from Funders
-- Funders: foundations/agencies that FUND Actors
+- Funders: foundations/agencies that FUND Actors. Government funders create one FUNDS edge per fiscal year — multiple edges between the same funder and actor are intentional time-series records (NOT duplicates). Use WHERE r.year=N for snapshots, SUM(r.amount) for lifetime totals.
 - StrategyArea: practitioner-defined groupings (e.g. Prevention, Intervention) — NOT Solutions
 - Ecosystem: governance bodies (councils, elected officials) that SETS_POLICY and FUNDS`,
         inputSchema: {
