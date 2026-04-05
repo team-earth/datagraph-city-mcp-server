@@ -103,7 +103,7 @@ Sign up at [datagraph.city](https://datagraph.city) to get your free API key.
 | **Solutions** | Potential strategies to overcome each Obstacle (NOT actual programs) |
 | **Resources** | Actual operating programs that implement a Solution in practice |
 | **Actors** | Organizations that run Resources |
-| **Funders** | Foundations and government agencies that fund Actors |
+| **Funders** | Foundations and government agencies that fund Actors or Resources (depending on source specificity) |
 | **StrategyArea** | Practitioner-defined operational groupings (e.g. Prevention, Intervention) — present in some datasets |
 | **Ecosystem** | Governance stakeholders (elected officials, planning bodies) that set policy — present in some datasets |
 
@@ -111,8 +111,14 @@ Sign up at [datagraph.city](https://datagraph.city) to get your free API key.
 ```
 (Goal)-[:HAS_OBSTACLE]->(Obstacle)-[:HAS_SOLUTION]->(Solution)
     <-[:IMPLEMENTS]-(Resource)<-[:EXECUTES]-(Actor)<-[:FUNDS]-(Funder)
+                    (Resource)<-[:FUNDS]-(Funder)  [when source names a specific program]
 (Actor)-[:WORKS_IN]->(StrategyArea)
 ```
+
+**FUNDS edge targeting:**
+- `(Funder)-[:FUNDS]->(Actor)` — when the funding source names only the organization (most sources)
+- `(Funder)-[:FUNDS]->(Resource)` — when the funding source names a specific program (currently COMBAT grants only)
+- To find all funding, query both: `MATCH (f)-[:FUNDS]->(n) WHERE n:Actor OR n:Resource`
 
 **Critical distinctions:**
 - Solutions are theoretical/potential interventions — they describe *what could work*

@@ -15,7 +15,8 @@
  * - Solutions: POTENTIAL strategies to overcome obstacles if implemented (plural - not actual programs)
  * - Resources: ACTUAL programs/initiatives currently operating (plural)
  * - Actors: Organizations running the Resources (not in GOSR acronym but critical to the model)
- * - Funders: Foundations or government agencies that FUND Actors (F-layer)
+ * - Funders: Foundations or government agencies that FUND Actors or Resources (F-layer)
+ *   FUNDS edges may target Actors (org-level) or Resources (program-level) depending on source specificity.
  *
  * Extended layers (present in some datasets):
  * - StrategyArea: Broad practitioner-defined operational groupings (e.g. Prevention, Intervention).
@@ -60,7 +61,7 @@ if (!API_KEY) {
 const server = new Server(
     {
         name: 'datagraph',
-        version: '1.5.0',
+        version: '1.6.0',
     },
     {
         capabilities: {
@@ -167,7 +168,7 @@ Extended layers (some datasets): StrategyArea (Actor WORKS_IN) · Ecosystem (SET
 - Solutions: plural potential strategies to overcome Obstacles (NOT actual programs)
 - Resources: plural actual operating programs (IMPLEMENT Solutions)
 - Actors: organizations that EXECUTE Resources and receive FUNDS from Funders
-- Funders: foundations/agencies that FUND Actors. Government funders create one FUNDS edge per fiscal year — multiple edges between the same funder and actor are intentional time-series records (NOT duplicates). Use WHERE r.year=N for snapshots, SUM(r.amount) for lifetime totals.
+- Funders: foundations/agencies that FUND Actors or Resources. FUNDS edges target Actors (org-level) when the source names only the organization, or Resources (program-level) when the source names a specific program. To find everything a funder funds, query both: (f)-[:FUNDS]->(a:Actor) UNION (f)-[:FUNDS]->(r:Resource). Government funders create one FUNDS edge per fiscal year — multiple edges between the same funder and actor/resource are intentional time-series records (NOT duplicates). Use WHERE r.year=N for snapshots, SUM(r.amount) for lifetime totals.
 - StrategyArea: practitioner-defined groupings (e.g. Prevention, Intervention) — NOT Solutions
 - Ecosystem: governance bodies (councils, elected officials) that SETS_POLICY and FUNDS`,
         inputSchema: {
@@ -522,7 +523,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
                                     solutions: "POTENTIAL strategies to overcome each Obstacle if implemented (plural - NOT actual programs)",
                                     resources: "ACTUAL operating programs that implement a Solution in practice (plural)",
                                     actors: "Organizations that EXECUTE Resources (in model but not in GOSR acronym)",
-                                    funders: "Foundations or government agencies that FUND Actors. Direction: (Funder)-[:FUNDS]->(Actor)",
+                                    funders: "Foundations or government agencies that FUND Actors or Resources. Direction: (Funder)-[:FUNDS]->(Actor) when source names only the org; (Funder)-[:FUNDS]->(Resource) when source names a specific program. Query both patterns to find all funding.",
                                     strategy_area: "Extended layer (some datasets). Broad practitioner groupings e.g. Prevention, Intervention. NOT Solutions. Relationship: (Actor)-[:WORKS_IN]->(StrategyArea)",
                                     ecosystem: "Extended layer (some datasets). Governance stakeholders (elected officials, planning bodies) that set policy and allocate public funds. Relationships: SETS_POLICY, FUNDS, WORKS_IN"
                                 }

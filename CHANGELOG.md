@@ -2,6 +2,20 @@
 
 All notable changes to the DataGraph MCP Server will be documented in this file.
 
+## [1.6.0] - 2026-04-05
+
+### Changed
+- **F→A / F→R schema documentation**: Updated Funder descriptions throughout to reflect that FUNDS edges can target either Actors (F→A) or Resources (F→R) depending on source specificity
+  - File header: expanded GOSR Funder layer description
+  - `list_datasets` tool description: Funders now "fund Actors or Resources"
+  - `get_server_info` response: Funders entry updated with dual-target explanation
+  - README: Funders table row and key relationship chain updated; added union query guidance for mixed F→A / F→R datasets
+
+## [1.5.0] - 2026-04-03
+
+### Changed
+- **Longitudinal funding time-series guidance**: Added multi-year time-series note to `list_datasets` Funders description and REST API
+
 ## [1.4.0] - 2026-03-30
 
 ### Changed
