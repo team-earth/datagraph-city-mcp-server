@@ -61,7 +61,7 @@ if (!API_KEY) {
 const server = new Server(
     {
         name: 'datagraph',
-        version: '1.7.1',
+        version: '1.7.2',
     },
     {
         capabilities: {
