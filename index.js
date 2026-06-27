@@ -61,7 +61,7 @@ if (!API_KEY) {
 const server = new Server(
     {
         name: 'datagraph',
-        version: '1.7.0',
+        version: '1.7.1',
     },
     {
         capabilities: {
@@ -81,6 +81,7 @@ const TOOLS = [
             type: 'object',
             properties: {},
         },
+        annotations: { title: 'Get Server Info', readOnlyHint: true },
     },
     {
         name: 'get_locality_schema',
@@ -105,6 +106,7 @@ Why Cypher-first? Natural language parsing is limited and brittle. LLM-generated
             },
             required: ['locality'],
         },
+        annotations: { title: 'Get Locality Schema', readOnlyHint: true },
     },
     {
         name: 'query_locality_data',
@@ -151,6 +153,7 @@ Example: MATCH (g:Goal) WHERE g.dataset = 'nova-scotia-gosr' RETURN g
             },
             required: ['query'],
         },
+        annotations: { title: 'Query Locality Data', readOnlyHint: true, openWorldHint: true },
     },
     {
         name: 'list_datasets',
@@ -180,6 +183,7 @@ Extended layers (some datasets): StrategyArea (Actor WORKS_IN) · Ecosystem (SET
                 },
             },
         },
+        annotations: { title: 'List Datasets', readOnlyHint: true },
     },
     {
         name: 'get_usage_stats',
@@ -188,6 +192,7 @@ Extended layers (some datasets): StrategyArea (Actor WORKS_IN) · Ecosystem (SET
             type: 'object',
             properties: {},
         },
+        annotations: { title: 'Get Usage Stats', readOnlyHint: true },
     },
 ];
 
